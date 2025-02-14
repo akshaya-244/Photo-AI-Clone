@@ -6,12 +6,16 @@
     "start": "bun run index.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@repo/common": "*",
+    "@repo/db": "*"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@fal-ai/client": "^1.2.3",
+    "@neondatabase/serverless": "^0.10.4",
     "express": "^4.21.2"
   }
 }
