@@ -36,20 +36,14 @@ model Models{
   triggerWord String?
   trainingStatus OutputImageStatusEnum  @default(Pending)
   falAiRequestId String?
-  images TrainingImages[]
   generatedImages GeneratedImages[]
   // generatedImages GenerateImage[] we shouldnt have array of image urls just like this there should be another table
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  zipUrl String
 }
 
 
-model TrainingImages{
-  id String @id @default(uuid())
-  imageURL String
-  modelId String
-  model Models @relation(fields: [modelId], references: [id])
-}
 
 
 model GeneratedImages{
@@ -58,7 +52,7 @@ model GeneratedImages{
   imageURL String @default("")
   userId String
   prompt String
-  falAiRequestId String?
+  falAiRequestId String
   status OutputImageStatusEnum @default(Pending)
   model Models @relation(fields: [modelId], references: [id])
   reatedAt DateTime @default(now())

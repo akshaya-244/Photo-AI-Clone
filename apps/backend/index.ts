@@ -1,13 +1,32 @@
 import express from "express"
 import {TrainModel, GenerateImage, GenerateImagesFromPack} from "@repo/common/types"
 import {prismaClient} from "@repo/db"
-const app=express()
+import {s3, write, S3Client} from "bun"
+import { FalAIModel } from "./models/FalAIModel"
 
+const app=express()
+const falAiModel = new FalAIModel()
 const PORT = process.env.PORT || 8080
 const USER_ID="1234"
 app.use(express.json())
+
+app.get('/pre-signed-url',  (req, res) => {
+    const key=  `models/${Date.now()}_${Math.random()}.zip`
+    const url =  S3Client.presign(`models/${Date.now()}_${Math.random()}.zip`,{
+        accessKeyId: process.env.S3_ACCESS_KEY,
+        secretAccessKey: process.env.S3_SECRET_KEY,
+        endpoint: process.env.ENDPOINT,
+        bucket: process.env.BUCKET_NAME,
+        expiresIn: 5*60
+    })
+    res.json({
+        url,
+        key
+    })
+})
 app.post('/ai/training', async(req, res) => {
     const parsedBody = TrainModel.safeParse(req.body)
+    const images=req.body.images
     if(!parsedBody.success)
     {
         res.status(411).json({
@@ -15,6 +34,9 @@ app.post('/ai/training', async(req, res) => {
         })
         return;
     }
+
+
+    const {request_id, response_url} =await falAiModel.trainImages(parsedBody.data.zipUrl,parsedBody.data.name)
 
     const data=await prismaClient.models.create({
         data:{
@@ -24,7 +46,9 @@ app.post('/ai/training', async(req, res) => {
             ethnicity: parsedBody.data.ethnicity,
             eyeColor: parsedBody.data.eyeColor,
             bald: parsedBody.data.bald,
-            userId: USER_ID
+            userId: USER_ID,
+            zipUrl: parsedBody.data.zipUrl,
+            falAiRequestId: request_id
         }
     })
 
@@ -42,12 +66,26 @@ app.post('/ai/generate',async (req, res) => {
         })
         return
     }
+    const model=await prismaClient.models.findUnique({
+        where:{
+            id: parsedBody.data.modelId
+        }
+    })
+
+    if(!model || !model.tensorPath)
+    {
+        res.status(411).json({
+            message: "Model not found"
+        })
+    }
+    const {request_id, response_url}=await falAiModel.generateImage(parsedBody.data.prompt, model?.tensorPath ?? "")
     const data=await prismaClient.generatedImages.create({
         data:{
             modelId: parsedBody.data.modelId,
             prompt: parsedBody.data.prompt,
             imageURL: "",
-            userId: USER_ID
+            userId: USER_ID,
+            falAiRequestId: request_id 
 
         }
     })
@@ -72,12 +110,20 @@ app.post('/pack/generate', async(req, res) => {
 
         }
     })
+
+    let requestIds: {request_id:string}[] = await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt,parsedBody.data.modelId)))
+
+    prompts.forEach(async(prompt) => {
+        const {request_id, response_url} = await falAiModel.generateImage(prompt.prompt, parsedBody.data.modelId)
+    })
     const images= await prismaClient.generatedImages.createManyAndReturn({
-        data: prompts.map((prompt) => ({
+        data: prompts.map((prompt, index) => ({
             prompt: prompt.prompt,
             userId: USER_ID,
             modelId: parsedBody.data.modelId,
-            imageUrl:""
+            imageUrl:"",
+            falAiRequestId: requestIds[index].request_id
+            
 
         }))
 

@@ -8,7 +8,7 @@ export const TrainModel= z.object({
     eyeColor: z.enum(["Brown", "Blue", "Hazel","Gray","Black"]),
     bald: z.boolean(),
     userId: z.string(),
-    images: z.array(z.string())
+    zipUrl: z.string()
 
 
 })
