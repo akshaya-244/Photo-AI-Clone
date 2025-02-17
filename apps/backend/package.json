@@ -3,7 +3,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "bun run index.ts"
+    "start": "bun run index.ts",
+    "dev": "bun run index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -16,6 +17,9 @@
   "dependencies": {
     "@fal-ai/client": "^1.2.3",
     "@neondatabase/serverless": "^0.10.4",
-    "express": "^4.21.2"
+    "@types/cors": "^2.8.17",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
   }
 }

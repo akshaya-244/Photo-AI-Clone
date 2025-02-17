@@ -1,32 +1,39 @@
 import express from "express"
 import {TrainModel, GenerateImage, GenerateImagesFromPack} from "@repo/common/types"
 import {prismaClient} from "@repo/db"
-import {s3, write, S3Client} from "bun"
+import { S3Client} from "bun"
 import { FalAIModel } from "./models/FalAIModel"
+import cors from "cors"
 
 const app=express()
+app.use(cors())
+app.use(express.json())
 const falAiModel = new FalAIModel()
 const PORT = process.env.PORT || 8080
 const USER_ID="1234"
-app.use(express.json())
 
 app.get('/pre-signed-url',  (req, res) => {
     const key=  `models/${Date.now()}_${Math.random()}.zip`
     const url =  S3Client.presign(`models/${Date.now()}_${Math.random()}.zip`,{
+        method: "PUT",
         accessKeyId: process.env.S3_ACCESS_KEY,
         secretAccessKey: process.env.S3_SECRET_KEY,
         endpoint: process.env.ENDPOINT,
         bucket: process.env.BUCKET_NAME,
-        expiresIn: 5*60
+        expiresIn: 5*60,
+        type: "application/zip"
     })
+
+
     res.json({
-        url,
+        url, 
         key
     })
 })
 app.post('/ai/training', async(req, res) => {
     const parsedBody = TrainModel.safeParse(req.body)
-    const images=req.body.images
+    console.log(req.body)
+    console.log(parsedBody)
     if(!parsedBody.success)
     {
         res.status(411).json({
