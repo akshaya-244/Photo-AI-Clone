@@ -32,7 +32,6 @@ app.get('/pre-signed-url',  (req, res) => {
 })
 app.post('/ai/training',authMiddleware, async(req, res) => {
     const parsedBody = TrainModel.safeParse(req.body)
-    console.log("Req.userId: ",req.userId)
     console.log(req.body)
     console.log(parsedBody)
     if(!parsedBody.success)
@@ -92,7 +91,7 @@ app.post('/ai/generate',authMiddleware,async (req, res) => {
             modelId: parsedBody.data.modelId,
             prompt: parsedBody.data.prompt,
             imageURL: "",
-            userId: req.userId!,
+            userId: req.body.userId!,
             falAiRequestId: request_id 
 
         }
@@ -127,7 +126,7 @@ app.post('/pack/generate',authMiddleware, async(req, res) => {
     const images= await prismaClient.generatedImages.createManyAndReturn({
         data: prompts.map((prompt, index) => ({
             prompt: prompt.prompt,
-            userId: req.userId!,
+            userId: req.body.userId!,
             modelId: parsedBody.data.modelId,
             imageUrl:"",
             falAiRequestId: requestIds[index].request_id
@@ -157,7 +156,7 @@ app.get('/image/bulk',authMiddleware,async (req, res) => {
     const imagesData = await prismaClient.generatedImages.findMany({
         where: {
             id: { in : ids},
-            userId: req.userId!
+            userId: req.body.userId!
         },
         skip: parseInt(offset),
         take: parseInt(limit)
