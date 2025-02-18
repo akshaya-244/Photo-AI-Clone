@@ -13,10 +13,8 @@ export default function Appbar() {
         </div>
         <div>
         <SignedOut>
-            <Button className="text-xl" variant={"ghost"}>
             <SignInButton />
 
-            </Button>
           </SignedOut>
           <SignedIn>
             <UserButton />

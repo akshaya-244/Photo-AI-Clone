@@ -4,13 +4,13 @@ import {prismaClient} from "@repo/db"
 import { S3Client} from "bun"
 import { FalAIModel } from "./models/FalAIModel"
 import cors from "cors"
+import { authMiddleware } from "./middleware"
 
 const app=express()
 app.use(cors())
 app.use(express.json())
 const falAiModel = new FalAIModel()
 const PORT = process.env.PORT || 8080
-const USER_ID="1234"
 
 app.get('/pre-signed-url',  (req, res) => {
     const key=  `models/${Date.now()}_${Math.random()}.zip`
@@ -30,8 +30,9 @@ app.get('/pre-signed-url',  (req, res) => {
         key
     })
 })
-app.post('/ai/training', async(req, res) => {
+app.post('/ai/training',authMiddleware, async(req, res) => {
     const parsedBody = TrainModel.safeParse(req.body)
+    console.log("Req.userId: ",req.userId)
     console.log(req.body)
     console.log(parsedBody)
     if(!parsedBody.success)
@@ -53,7 +54,7 @@ app.post('/ai/training', async(req, res) => {
             ethnicity: parsedBody.data.ethnicity,
             eyeColor: parsedBody.data.eyeColor,
             bald: parsedBody.data.bald,
-            userId: USER_ID,
+            userId: req.body.userId!,
             zipUrl: parsedBody.data.zipUrl,
             falAiRequestId: request_id
         }
@@ -64,7 +65,7 @@ app.post('/ai/training', async(req, res) => {
     })
 })
 
-app.post('/ai/generate',async (req, res) => {
+app.post('/ai/generate',authMiddleware,async (req, res) => {
     const parsedBody=GenerateImage.safeParse(req.body)
     if(!parsedBody.success)
     {
@@ -91,7 +92,7 @@ app.post('/ai/generate',async (req, res) => {
             modelId: parsedBody.data.modelId,
             prompt: parsedBody.data.prompt,
             imageURL: "",
-            userId: USER_ID,
+            userId: req.userId!,
             falAiRequestId: request_id 
 
         }
@@ -102,7 +103,7 @@ app.post('/ai/generate',async (req, res) => {
 
 })
 
-app.post('/pack/generate', async(req, res) => {
+app.post('/pack/generate',authMiddleware, async(req, res) => {
     //generate images for a specific pack
     const parsedBody= GenerateImagesFromPack.safeParse(req.body)
     if(!parsedBody.success){
@@ -126,7 +127,7 @@ app.post('/pack/generate', async(req, res) => {
     const images= await prismaClient.generatedImages.createManyAndReturn({
         data: prompts.map((prompt, index) => ({
             prompt: prompt.prompt,
-            userId: USER_ID,
+            userId: req.userId!,
             modelId: parsedBody.data.modelId,
             imageUrl:"",
             falAiRequestId: requestIds[index].request_id
@@ -148,7 +149,7 @@ app.get('/pack/bulk', async(req, res) => {
     })
 })
 
-app.get('/image/bulk',async (req, res) => {
+app.get('/image/bulk',authMiddleware,async (req, res) => {
     const ids=req.query.images as string[]
     const limit= req.query.limit as string || "10"
     const offset=req.query.offset as string || "0"
@@ -156,7 +157,7 @@ app.get('/image/bulk',async (req, res) => {
     const imagesData = await prismaClient.generatedImages.findMany({
         where: {
             id: { in : ids},
-            userId: USER_ID
+            userId: req.userId!
         },
         skip: parseInt(offset),
         take: parseInt(limit)

@@ -18,6 +18,8 @@
     "@fal-ai/client": "^1.2.3",
     "@neondatabase/serverless": "^0.10.4",
     "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.8",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2"
