@@ -37,7 +37,7 @@ export class FalAIModel extends BaseModel{
     public async generateImageSync(tensorPath: string){
         const response=fal.subscribe("flux-ai/flux-lora",{
             input: {
-                prompt: "Generate a head shot for this user in front of a background",
+                prompt: "Generate a head shot for this user in front of a background.",
                 loras: [{path: tensorPath, scale: 1}]
             },
            
