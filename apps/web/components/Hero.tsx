@@ -61,13 +61,13 @@ export default function Hero() {
         </Carousel>
             <div className="flex justify-center">
               <SignedIn>
-                <Button onClick={() => {
+                <Button asChild onClick={() => {
                   router.push('/dashboard')
                 }} className="min-w-xl py-10 mt-6 text-xl md:text-3xl lg:text-4xl" variant={"secondary"} >Dashboard</Button>
 
               </SignedIn>
               <SignedOut>
-               <Button variant={"secondary"} className="min-w-xl py-10 mt-6 text-xl  lg:text-3xl" >
+               <Button asChild variant={"secondary"} className="min-w-xl py-10 mt-6 text-xl  lg:text-3xl" >
                 <SignInButton />
 
                 </Button>
