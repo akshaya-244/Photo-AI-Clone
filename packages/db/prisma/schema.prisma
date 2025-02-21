@@ -63,6 +63,9 @@ model GeneratedImages{
 
 model Pack {
   id String @id @default(uuid())
+  description String @default("")
+  imageUrl1 String @default("")
+  imageUrl2 String @default("")
   name String
   prompts PackPrompt[]
 }
