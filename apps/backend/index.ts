@@ -148,6 +148,16 @@ app.get('/pack/bulk', async(req, res) => {
     })
 })
 
+app.get('/models', authMiddleware, async(req, res)=>{
+    const models=await prismaClient.models.findMany({
+        where:{
+            userId: req.body.userId
+        }
+    })
+    res.json({
+        models
+    })
+})
 app.get('/image/bulk',authMiddleware,async (req, res) => {
     const ids=req.query.images as string[]
     const limit= req.query.limit as string || "10"
@@ -171,6 +181,7 @@ app.post('/fal-ai/webhook/train', async(req, res) => {
 
     console.log(req.body)
     const request_id= req.body.request_id;
+    const {imageUrl}=await falAiModel.generateImageSync(req.body.tensorPath)
     await prismaClient.models.updateMany({
         where:{
             falAiRequestId: request_id
@@ -178,6 +189,7 @@ app.post('/fal-ai/webhook/train', async(req, res) => {
         data:{
             trainingStatus:"Generated",
             tensorPath: req.body.tensorPath,
+            thumbnail: imageUrl
 
         }
     })
@@ -197,7 +209,6 @@ app.post('/fal-ai/webhook/image', async(req, res) => {
             imageURL: req.body.image_url
         }
     })
-    console.log(req.body)
     res.json({
         message: "Webhook recievedd"
     })
