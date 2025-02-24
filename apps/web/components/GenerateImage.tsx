@@ -48,21 +48,25 @@ export function GenerateImage() {
                 setselectedModel(model.id);
               }}
             >
+              <div className="relative w-full h-auto aspect-[5/4]">
               <Image
-                width={100}
-                height={100}
+               fill
+               className="rounded-md object-cover"
+                sizes="(max-width: 768px) 100vw, 500px"
                 alt="Temp"
                 src={model.thumbnail}
               />
+              </div>
+              
               <div>{model.name}</div>
             </div>
           ))}
           {
             modelLoading && <div className="grid grid-cols-4 gap-2 p-4">
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <Skeleton className="h-12 w-12 rounded-full" />
+              <Skeleton className="h-40 w-full rounded-full" />
+              <Skeleton className="h-40 w-full rounded-full" />
+              {/* <Skeleton className="h-40 w-full rounded-full" />
+              <Skeleton className="h-40 w-full rounded-full" /> */}
 
             </div>
           }

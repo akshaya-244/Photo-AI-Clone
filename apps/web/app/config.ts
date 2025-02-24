@@ -1,2 +1,3 @@
 export const BACKEND_URL="http://localhost:8080"
 export const CLOUDFLARE_URL="https://pub-9ee50bda64c54532b15f88b2cf369491.r2.dev"
+export const CLOUDFLARE_URL2="https://pub-e32741334460475d87062c8698a34758.r2.dev"

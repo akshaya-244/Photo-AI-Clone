@@ -8,9 +8,9 @@ import { Camera } from "@/components/Camera";
 export default function Dashboard() {
   return (
     <div className="flex justify-center">
-      <Tabs defaultValue="account" className="w-[1200px] py-4 ">
-        <TabsList className="grid w-full grid-cols-4 ">
-          <TabsTrigger value="camera">Camera</TabsTrigger>
+      <Tabs  defaultValue="camera" className="lg:w-[1200px] md:w-[800px] w-[475px] py-4 ">
+        <TabsList  className="grid w-full grid-cols-4 ">
+          <TabsTrigger  value="camera">Camera</TabsTrigger>
           <TabsTrigger value="generate">Generate an image</TabsTrigger>
           <TabsTrigger value="train">Train a model</TabsTrigger>
           <TabsTrigger value="packs">Packs</TabsTrigger>

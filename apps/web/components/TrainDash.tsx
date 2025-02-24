@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {UploadThumbnail} from "@/components/UploadThumbnail";
 
 import { Switch } from "@/components/ui/switch";
 import { UploadModal } from "@/components/ui/upload";
@@ -57,6 +58,8 @@ export default function TrainDash() {
   }
 
   const [zipUrl, setZipUrl] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
+
   const [name, setName]=useState("")
   const [age, setAge]=useState(0)
   const [ethnicity, setEthnicity] = React.useState<Ethnicity | "">(""); 
@@ -74,6 +77,7 @@ export default function TrainDash() {
       ethnicity: ethnicity as Ethnicity,
       eyeColor: eyeColor as EyeColor,
       bald,
+      thumbnail,
       zipUrl,
       
     }
@@ -84,26 +88,27 @@ export default function TrainDash() {
       }
     })
     console.log("Response: ",response)
-    router.push('/')
+    
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex  justify-center py-14">
       <Card className="w-[600px]">
         <CardHeader>
-          <CardTitle>Create project</CardTitle>
+          <CardTitle>Train New Model</CardTitle>
           <CardDescription>
-            Deploy your new project in one-click.
+            Create a custom AI model with your images
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid w-full items-center gap-4">
+          <div className="grid grid-cols-2 w-full items-center gap-4">
+            
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Name</Label>
               <Input id="name" placeholder="Name of your model" onChange={(e)=> setName(e.target.value)}/>
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="framework">Type</Label>
+              <Label  htmlFor="framework">Type</Label>
               <Select onValueChange={(value) => setType(value as ModelType)}>
                 <SelectTrigger id="framework">
                   <SelectValue placeholder="Select" />
@@ -115,6 +120,7 @@ export default function TrainDash() {
                 </SelectContent>
               </Select>
             </div>
+          
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Age</Label>
               <Input id="number" onChange={e => setAge(Number(e.target.value))} placeholder="Age" />
@@ -162,14 +168,27 @@ export default function TrainDash() {
               <Label htmlFor="bald">Bald</Label>
             </div>
 
+            <div className="flex flex-col items-center space-y-1.5">
+            <Label htmlFor="framework">Thumbnail</Label>
+            <UploadThumbnail onUploadDone={(thumbnail) => {
+              setThumbnail(thumbnail)
+            }}/>
+            </div>
+
+            <div className="flex flex-col items-center space-y-1.5">
+            <Label htmlFor="framework">Photos</Label>
             <UploadModal onUploadDone={(zipUrl) => {
               setZipUrl(zipUrl)
             }}/>
+            </div>
+
+           
           </div>
+
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={() => router.push('/')}>Cancel</Button>
-          <Button disabled={!zipUrl || !name || !type || !ethnicity || !eyeColor || !age} onClick={trainModelFunc}>Create Model</Button>
+          <Button disabled={!zipUrl || !name || !type || !ethnicity || !eyeColor || !age || !thumbnail} onClick={trainModelFunc}>Create Model</Button>
         </CardFooter>
       </Card>
     </div>

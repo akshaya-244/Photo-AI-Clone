@@ -31,7 +31,7 @@ model Models{
   ethnicity ethnicityEnum
   eyeColor eyeColorEnum
   bald Boolean
-  userId String 
+  userId String?
   thumbnail String?
   tensorPath String?
   triggerWord String?
