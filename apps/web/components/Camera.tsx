@@ -16,8 +16,10 @@ export function Camera() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data.images);
-      setImages(response.data.images);
+      if(response.data.images.length === 0)
+        setImages([])
+      else
+        setImages(response.data.images);
     })();
   }, []);
 
