@@ -12,24 +12,6 @@ app.use(express.json())
 const falAiModel = new FalAIModel()
 const PORT = process.env.PORT || 8080
 
-app.get('/pre-signed-url-thumbnail', (req, res) => {
-    const key=`${Date.now()}_${Math.random()}`
-    const url =  S3Client.presign(`${key}`,{
-        method: "PUT",
-        accessKeyId: process.env.S3_ACCESS_KEY,
-        secretAccessKey: process.env.S3_SECRET_KEY,
-        endpoint: process.env.ENDPOINT,
-        bucket: process.env.BUCKET_NAME2,
-        expiresIn: 5*60,
-        type: "application/zip"
-    })
-
-    res.json({
-        url,
-        key
-    })
-
-})
 
 app.get('/pre-signed-url',  (req, res) => {
     const key=  `models/${Date.now()}_${Math.random()}.zip`

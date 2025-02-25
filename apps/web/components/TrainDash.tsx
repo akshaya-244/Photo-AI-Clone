@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {UploadThumbnail} from "@/components/UploadThumbnail";
 
 import { Switch } from "@/components/ui/switch";
 import { UploadModal } from "@/components/ui/upload";
@@ -58,7 +57,6 @@ export default function TrainDash() {
   }
 
   const [zipUrl, setZipUrl] = useState("");
-  const [thumbnail, setThumbnail] = useState("");
 
   const [name, setName]=useState("")
   const [age, setAge]=useState(0)
@@ -77,7 +75,6 @@ export default function TrainDash() {
       ethnicity: ethnicity as Ethnicity,
       eyeColor: eyeColor as EyeColor,
       bald,
-      thumbnail,
       zipUrl,
       
     }
@@ -168,13 +165,7 @@ export default function TrainDash() {
               <Label htmlFor="bald">Bald</Label>
             </div>
 
-            <div className="flex flex-col items-center space-y-1.5">
-            <Label htmlFor="framework">Thumbnail</Label>
-            <UploadThumbnail onUploadDone={(thumbnail) => {
-              setThumbnail(thumbnail)
-            }}/>
-            </div>
-
+            
             <div className="flex flex-col items-center space-y-1.5">
             <Label htmlFor="framework">Photos</Label>
             <UploadModal onUploadDone={(zipUrl) => {
@@ -188,7 +179,7 @@ export default function TrainDash() {
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={() => router.push('/')}>Cancel</Button>
-          <Button disabled={!zipUrl || !name || !type || !ethnicity || !eyeColor || !age || !thumbnail} onClick={trainModelFunc}>Create Model</Button>
+          <Button disabled={!zipUrl || !name || !type || !ethnicity || !eyeColor || !age } onClick={trainModelFunc}>Create Model</Button>
         </CardFooter>
       </Card>
     </div>
