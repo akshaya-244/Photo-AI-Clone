@@ -6,7 +6,7 @@ export class FalAIModel {
     constructor() {
     }
 
-    public async generateImage(prompt: string,tensorPath: string){
+    public async  generateImage(prompt: string,tensorPath: string){
         const  { request_id, response_url }  = await fal.queue.submit("fal-ai/flux-lora", {
             input: {
               prompt: prompt,
@@ -15,6 +15,7 @@ export class FalAIModel {
             webhookUrl: `${process.env.WEBHOOK_BASE_URL}/fal-ai/webhook/image`,
             
         })
+        console.log("Response URL of created image: ", response_url)
         return  { request_id, response_url } 
     }
 
