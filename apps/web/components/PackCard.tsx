@@ -1,4 +1,7 @@
 "use client";
+import { BACKEND_URL } from "@/app/config";
+import { useAuth } from "@clerk/nextjs";
+import axios from "axios";
 import Image from "next/image";
 
 export interface Tpack {
@@ -8,9 +11,21 @@ export interface Tpack {
   name: string;
   description: string;
 }
-export function PackCard(props: Tpack) {
+export function PackCard(props: Tpack & {selectedModel: string}) {
+  const {getToken}=useAuth()
   return (
-    <div className="hover:border-red-300 rounded-xl border-2 cursor-pointer">
+    <div className="hover:border-red-300 rounded-xl border-2 cursor-pointer" onClick={async() => {
+      const token=await getToken()
+
+      await axios.post(`${BACKEND_URL}/pack/generate`,{
+          modelId: props.selectedModel,
+          packId: props.id
+        },{
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        })
+    }}>
       <div className="flex  rounded overflow-hidden shadow-lg ">
         <Image src={props.imageUrl1} width={200} height={500} className="rounded" alt="FF" />
         <Image src={props.imageUrl2} width={200} height={500} className="rounded" alt="FF" />

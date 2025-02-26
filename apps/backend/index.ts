@@ -32,6 +32,9 @@ app.get('/pre-signed-url',  (req, res) => {
         key
     })
 })
+app.post('/modal', async(req, res) => {
+    console.log(req.body)
+})
 app.post('/ai/training',authMiddleware, async(req, res) => {
     const parsedBody = TrainModel.safeParse(req.body)
     console.log(req.body)
