@@ -4,9 +4,11 @@ import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ImageCard, TImage } from "./ImageCard";
+import { Skeleton } from "./ui/skeleton";
 
 export function Camera() {
   const [images, setImages] = useState<TImage[]>([]);
+  const [imagesLoading, setImagesLoading] = useState(true)
   const { getToken } = useAuth();
   useEffect(() => {
     (async () => {
@@ -20,6 +22,7 @@ export function Camera() {
         setImages([])
       else
         setImages(response.data.images);
+      setImagesLoading(false)
     })();
   }, []);
 
@@ -36,6 +39,11 @@ export function Camera() {
     </div>
   ) : (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 p-4">
+      {imagesLoading && <Skeleton className="py-20 w-95 h-72"/>}
+      {imagesLoading && <Skeleton className="py-20 w-95 h-72"/>}
+      {imagesLoading && <Skeleton className="py-20 w-95 h-72"/>}
+      {imagesLoading && <Skeleton className="py-20 w-95 h-72"/>}
+      
       {images.map((p) => (
         <ImageCard key={p.id} {...p} />
       ))}

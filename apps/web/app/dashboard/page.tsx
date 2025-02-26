@@ -8,7 +8,7 @@ import { Camera } from "@/components/Camera";
 export default function Dashboard() {
   return (
     <div className="flex justify-center">
-      <Tabs  defaultValue="camera" className="lg:w-[1200px] md:w-[800px] w-[475px] py-4 ">
+      <Tabs defaultValue="camera"  className="lg:w-[1200px] md:w-[800px] w-[475px] py-4 ">
         <TabsList  className="grid w-full grid-cols-4 ">
           <TabsTrigger  value="camera">Camera</TabsTrigger>
           <TabsTrigger value="generate">Generate an image</TabsTrigger>

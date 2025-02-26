@@ -2,9 +2,8 @@ import { response } from "express";
 import { BaseModel } from "./BaseModel";
 import { fal } from "@fal-ai/client";
 
-export class FalAIModel extends BaseModel{
+export class FalAIModel {
     constructor() {
-        super()
     }
 
     public async generateImage(prompt: string,tensorPath: string){
@@ -35,7 +34,7 @@ export class FalAIModel extends BaseModel{
          
     }
     public async generateImageSync(tensorPath: string){
-        const response=fal.subscribe("flux-ai/flux-lora",{
+        const response=await fal.subscribe("flux-ai/flux-lora",{
             input: {
                 prompt: "Generate a head shot for this user in front of a background.",
                 loras: [{path: tensorPath, scale: 1}]

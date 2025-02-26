@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 8080
 
 app.get('/pre-signed-url',  (req, res) => {
     const key=  `models/${Date.now()}_${Math.random()}.zip`
-    const url =  S3Client.presign(`models/${Date.now()}_${Math.random()}.zip`,{
+    const url =  S3Client.presign(`${key}.zip`,{
         method: "PUT",
         accessKeyId: process.env.S3_ACCESS_KEY,
         secretAccessKey: process.env.S3_SECRET_KEY,
@@ -152,7 +152,7 @@ app.get('/pack/bulk', async(req, res) => {
 app.get('/models', authMiddleware, async(req, res)=>{
     const models=await prismaClient.models.findMany({
         where:{
-            userId: req.body.userId
+            OR: [{userId: req.body.userId},{open: true}]
         }
     })
     res.json({
@@ -181,8 +181,9 @@ app.get('/image/bulk',authMiddleware,async (req, res) => {
 app.post('/fal-ai/webhook/train', async(req, res) => {
 
     console.log(req.body)
-    const request_id= req.body.request_id;
+    const request_id= req.body.request_id as string;
     const {imageUrl}=await falAiModel.generateImageSync(req.body.tensorPath)
+    console.log("Thumbnail: ",imageUrl)
     await prismaClient.models.updateMany({
         where:{
             falAiRequestId: request_id
@@ -201,6 +202,7 @@ app.post('/fal-ai/webhook/train', async(req, res) => {
 
 app.post('/fal-ai/webhook/image', async(req, res) => {
     const request_id=req.body.request_id
+
     await prismaClient.generatedImages.updateMany({
         where:{
             falAiRequestId: request_id

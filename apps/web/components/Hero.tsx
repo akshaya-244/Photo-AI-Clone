@@ -67,10 +67,11 @@ export default function Hero() {
 
               </SignedIn>
               <SignedOut>
-               <Button  variant={"secondary"} className="min-w-xl py-10 mt-6 text-xl  lg:text-3xl" >
-                <SignInButton />
+               
+                <SignInButton>
+                <Button  className="min-w-xl py-10 mt-6 text-xl  lg:text-3xl" >Sign In</Button>
+                </SignInButton>
 
-                </Button>
               </SignedOut>
             </div>
       </div>

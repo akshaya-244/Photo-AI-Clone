@@ -26,6 +26,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { BACKEND_URL } from "@/app/config";
+import { GenerateImage } from "./GenerateImage";
+import { AlertDialogDemo } from "./Popup";
 
 export default function TrainDash() {
 
@@ -57,7 +59,7 @@ export default function TrainDash() {
   }
 
   const [zipUrl, setZipUrl] = useState("");
-
+  const [open, setOpen] = useState(false)
   const [name, setName]=useState("")
   const [age, setAge]=useState(0)
   const [ethnicity, setEthnicity] = React.useState<Ethnicity | "">(""); 
@@ -85,7 +87,7 @@ export default function TrainDash() {
       }
     })
     console.log("Response: ",response)
-    
+    setOpen(true)
   }
 
   return (
@@ -166,20 +168,26 @@ export default function TrainDash() {
             </div>
 
             
-            <div className="flex flex-col items-center space-y-1.5">
+           
+
+           
+          </div>
+          <div className="grid grid-cols-1  items-center py-10">
+
+          <div className="flex flex-col  space-y-2">
             <Label htmlFor="framework">Photos</Label>
             <UploadModal onUploadDone={(zipUrl) => {
               setZipUrl(zipUrl)
             }}/>
             </div>
-
-           
-          </div>
+            </div>
 
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={() => router.push('/')}>Cancel</Button>
           <Button disabled={!zipUrl || !name || !type || !ethnicity || !eyeColor || !age } onClick={trainModelFunc}>Create Model</Button>
+          <AlertDialogDemo open={open} setOpen={setOpen} />
+       
         </CardFooter>
       </Card>
     </div>

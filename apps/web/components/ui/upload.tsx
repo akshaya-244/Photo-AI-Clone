@@ -9,8 +9,8 @@ export function UploadModal({onUploadDone} :{onUploadDone: (zipUrl: string) => v
     
 
   return (
-    <Card>
-      <CardContent className="p-6 space-y-4">
+    <Card className="w-[500px]">
+      <CardContent className="p-6 space-y-4 ">
         <div className="border-2 border-dashed border-gray-200 rounded-lg flex flex-col gap-1 p-6 items-center">
           <FileIcon className="w-16 h-16 text-zinc-500 dark:text-zinc-400" />        
           <Button variant="outline" className="w-full" onClick={() => {

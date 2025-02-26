@@ -26,9 +26,19 @@ export function GenerateImage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setModels(response.data.models);
+      if(response.data.models.length === 0)
+      {
+        setModels([])
+        setselectedModel("")
+        setModelLoading(false)
+      } 
+      else{
+
+        setModels(response.data.models);
       setselectedModel(response.data.models[0]?.id);
       setModelLoading(false)
+      }
+      
     })();
   }, []);
 

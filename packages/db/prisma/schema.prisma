@@ -42,6 +42,7 @@ model Models{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   zipUrl String
+  open Boolean @default(false)
 }
 
 
