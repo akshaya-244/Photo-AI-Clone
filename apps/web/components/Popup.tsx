@@ -14,16 +14,18 @@ import {
   interface AlertInt{
     open: boolean,
     setOpen: (open: boolean) => void
+    title: string,
+    desc: string
   }
-  export function AlertDialogDemo({open, setOpen} : AlertInt) {
+  export function AlertDialogDemo({open, setOpen, title,  desc} : AlertInt) {
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
        
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Model Created</AlertDialogTitle>
+            <AlertDialogTitle>{title}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will take atleast 20 minutes to complete. 
+            {desc}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

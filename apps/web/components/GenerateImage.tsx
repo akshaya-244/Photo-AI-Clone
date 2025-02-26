@@ -7,6 +7,7 @@ import axios from "axios";
 import { BACKEND_URL } from "@/app/config";
 import Image from "next/image";
 import { Skeleton } from "./ui/skeleton";
+import { AlertDialogDemo } from "./Popup";
 
 interface TModel {
   id: string;
@@ -18,6 +19,7 @@ export function GenerateImage() {
   const [selectedModel, setselectedModel] = useState<string>();
   const [modelLoading, setModelLoading]=useState(true);
   const [prompt, setPrompt]= useState("")
+  const [open, setOpen]=useState(false)
   const { getToken } = useAuth();
 
   const generateImageFunc = async() => {
@@ -30,8 +32,9 @@ export function GenerateImage() {
       headers: {
         Authorization: `Bearer ${token}`,
       }})
-
+      setOpen(true)
       console.log(res)
+      setPrompt("")
   }
   useEffect(() => {
     (async () => {
@@ -105,6 +108,8 @@ export function GenerateImage() {
           <Button className="py-6 text-lg" variant={"secondary"} onClick={generateImageFunc} >
             Generate an Image
           </Button>
+         <AlertDialogDemo open={open} setOpen={setOpen} title="Image Created Successfully!!!" desc="Please check the generated image in the Camera section"/>
+         
         </div>
         
       </div>
