@@ -44,6 +44,7 @@ export function Camera() {
       {imagesLoading && <Skeleton className="py-20 w-95 h-72"/>}
       {imagesLoading && <Skeleton className="py-20 w-95 h-72"/>}
       
+
       {images.map((p) => (
         <ImageCard key={p.id} {...p} />
       ))}
