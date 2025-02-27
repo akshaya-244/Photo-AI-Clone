@@ -20,6 +20,7 @@ export function PackCard(props: Tpack & {selectedModelId: string}) {
       await axios.post(`${BACKEND_URL}/pack/generate`,{
           modelId: props.selectedModelId,
           packId: props.id
+          
         },{
           headers:{
             Authorization: `Bearer ${token}`

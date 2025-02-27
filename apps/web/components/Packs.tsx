@@ -18,6 +18,7 @@ async function getPacks(): Promise<Tpack[]> {
 }
 export async function Packs() {
   const packs = await getPacks();
+  console.log("Packs: ",packs)
     return <PacksClient packs={packs} />
 
   
