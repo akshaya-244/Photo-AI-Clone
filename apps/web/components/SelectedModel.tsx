@@ -13,7 +13,8 @@ interface TModel {
 export function SelectedModels({setselectedModel}: {setselectedModel: (model: string) => void}) {
     const [models, setModels] = useState<TModel[]>([]);
     //   const [selectedModel, setselectedModel] = useState<string>();
-      const [modelLoading, setModelLoading]=useState(true);
+    const [selectedModel, setLocalSelectedModel] = useState<string | null>(null); // Local state for selected model  
+    const [modelLoading, setModelLoading]=useState(true);
       const { getToken } = useAuth();
     
     useEffect(() => {
@@ -27,6 +28,7 @@ export function SelectedModels({setselectedModel}: {setselectedModel: (model: st
           if(response.data.models.length === 0)
           {
             setModels([])
+            setLocalSelectedModel(null)
             setselectedModel("")
             setModelLoading(false)
           } 
@@ -34,6 +36,7 @@ export function SelectedModels({setselectedModel}: {setselectedModel: (model: st
     
             setModels(response.data.models);
           setselectedModel(response.data.models[0]?.id);
+          setLocalSelectedModel(response.data.models[0]?.id)
           setModelLoading(false)
           }
           
@@ -42,17 +45,19 @@ export function SelectedModels({setselectedModel}: {setselectedModel: (model: st
     
   return  <div>
 
-    <div className="text-2xl pb-2">
+    <div className="text-2xl pb-2 flex justify-center font-bold ">
     Select Model
   </div>
 <div className="grid grid-cols-4 gap-1">
     {models.map((model) => (
       <div
-      className={`${selectedModelId == model.id ? "border-red-300" :""} cursor-pointer rounded border p-2 `}
+      className={`${selectedModel == model.id ? "border-red-300" :""} cursor-pointer rounded border p-2 `}
         key={model.id}
         onClick={() => {
           console.log(models);
           setselectedModel(model.id);
+          setLocalSelectedModel(model.id);
+
         }}
       >
         <div className="relative w-full h-auto aspect-[5/4]">

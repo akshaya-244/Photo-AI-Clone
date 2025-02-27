@@ -1,8 +1,6 @@
 import axios from "axios";
-import { PackCard } from "./PackCard";
 import { BACKEND_URL } from "@/app/config";
-import { SelectedModels } from "./SelectedModel";
-import { useState } from "react";
+import { PacksClient } from "./PacksClient";
 
 interface Tpack {
   id: string;
@@ -20,17 +18,8 @@ async function getPacks(): Promise<Tpack[]> {
 }
 export async function Packs() {
   const packs = await getPacks();
-  const [selectedModelId, setSelectedModeId]=useState<string>()
-  return (
-    <div>
-      <div>
-        <SelectedModels setselectedModel={setSelectedModeId}/>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 p-4">
-        {packs.map((p) => (
-          <PackCard key={p.id} {...p} selectedModel={setSelectedModeId}/>
-        ))}
-      </div>
-    </div>
-  );
+    return <PacksClient packs={packs} />
+
+  
+  
 }

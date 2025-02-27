@@ -32,14 +32,14 @@ app.get('/pre-signed-url',  (req, res) => {
         key
     })
 })
-app.get('/modal', (req, res) => {
-    console.log("Req: " ,req)
-    console.log("Requ: " ,req.body)
-     res.json({
-        message: "Hekki"
-    })
+// app.get('/modal', (req, res) => {
+//     console.log("Req: " ,req)
+//     console.log("Requ: " ,req.body)
+//      res.json({
+//         message: "Hekki"
+//     })
 
-})
+// })
 app.post('/ai/training',authMiddleware, async(req, res) => {
     const parsedBody = TrainModel.safeParse(req.body)
     console.log(req.body)

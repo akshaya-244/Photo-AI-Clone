@@ -11,14 +11,14 @@ export interface Tpack {
   name: string;
   description: string;
 }
-export function PackCard(props: Tpack & {selectedModel: string}) {
+export function PackCard(props: Tpack & {selectedModelId: string}) {
   const {getToken}=useAuth()
   return (
     <div className="hover:border-red-300 rounded-xl border-2 cursor-pointer" onClick={async() => {
       const token=await getToken()
 
       await axios.post(`${BACKEND_URL}/pack/generate`,{
-          modelId: props.selectedModel,
+          modelId: props.selectedModelId,
           packId: props.id
         },{
           headers:{
