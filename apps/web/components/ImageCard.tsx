@@ -17,14 +17,14 @@ export function ImageCard(props: TImage) {
       <div className="max-w-sm rounded overflow-hidden shadow-lg">
         {/* <div className="text-white">{props.imageURL}</div> */}
        
-        {/* {props.status == "Generated" ?  */}
+        {props.status == "Generated" ? 
         <Image
           width={500}
           height={500}
           src={props.imageURL}
           alt="Sunset in the mountains"
         /> 
-        {/* : <Skeleton className="h-60 w-90cd"/>} */}
+         : <Skeleton className="h-60 w-90z`"/>} 
       </div>
     </div>
   );

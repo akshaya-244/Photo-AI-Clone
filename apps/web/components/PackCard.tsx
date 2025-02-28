@@ -3,6 +3,8 @@ import { BACKEND_URL } from "@/app/config";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import Image from "next/image";
+import { useState } from "react";
+import { AlertDialogDemo } from "./Popup";
 
 export interface Tpack {
   id: string;
@@ -13,6 +15,7 @@ export interface Tpack {
 }
 export function PackCard(props: Tpack & {selectedModelId: string}) {
   const {getToken}=useAuth()
+  const [open, setOpen] = useState(false)
   return (
     <div className="hover:border-red-300 rounded-xl border-2 cursor-pointer" onClick={async() => {
       const token=await getToken()
@@ -20,12 +23,13 @@ export function PackCard(props: Tpack & {selectedModelId: string}) {
       await axios.post(`${BACKEND_URL}/pack/generate`,{
           modelId: props.selectedModelId,
           packId: props.id
-          
+
         },{
           headers:{
             Authorization: `Bearer ${token}`
           }
         })
+        setOpen(true)
     }}>
       <div className="flex  rounded overflow-hidden shadow-lg ">
         <Image src={props.imageUrl1} width={200} height={500} className="rounded" alt="FF" />
@@ -36,6 +40,7 @@ export function PackCard(props: Tpack & {selectedModelId: string}) {
         <div className="font-bold text-xl mb-2">{props.name}</div>
         <p className="text-white text-base">{props.description}</p>
       </div>
+      <AlertDialogDemo open={open} setOpen={setOpen} title="Images generated!!!" desc="You can view your images in the camera section!"/>
     </div>
   );
 }
