@@ -12,7 +12,7 @@ app.use(cors())
 app.use(express.json())
 const falAiModel = new FalAIModel()
 const PORT = process.env.PORT || 8080
-
+const stripe=require("stripe")(process.env.NEXT_STRIPE_SECRET_KEY)
 
 app.get('/pre-signed-url',  (req, res) => {
     const key=  `models/${Date.now()}_${Math.random()}.zip`
@@ -268,8 +268,28 @@ app.post('/fal-ai/webhook/image', async(req, res) => {
             
     //     })
     //   }
-    
         
+})
+
+app.post('/create-payment-intent',async (req, res) => {
+    try{
+        let {amount}= req.body
+        amount=Number(amount)
+        const paymentIntent=await stripe.paymentIntents.create({
+            amount,
+            currency: "usd",
+            automatic_payment_methods: {enabled: true}
+        })
+        res.json({
+            clientSecret: paymentIntent.clientSecret
+        })
+    }
+    catch(e){
+        console.log("Internal Error: ",e)
+        res.json({
+            error: `Internal Server Error: ${e}`
+    })
+    }
 })
 
 app.listen(PORT , () => {
