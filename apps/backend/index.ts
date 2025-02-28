@@ -156,7 +156,7 @@ app.post('/pack/generate',authMiddleware, async(req, res) => {
             prompt: prompt.prompt,
             userId: req.body.userId!,
             modelId: parsedBody.data.modelId,
-            imageUrl:"",
+            imageURL:"",
             falAiRequestId: requestIds[index].request_id 
             
 
