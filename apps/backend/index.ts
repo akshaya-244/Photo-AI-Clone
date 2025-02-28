@@ -144,33 +144,20 @@ app.post('/pack/generate',authMiddleware, async(req, res) => {
         }
     let requestIds: {request_id:string}[] = await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt,model?.tensorPath ?? "")))
 
+    
+    // const request_ids: { request_id: string }[] = [];
     // prompts.forEach(async(prompt) => {
     //     const {request_id, response_url} = await falAiModel.generateImage(prompt.prompt, model?.tensorPath ?? "")
-    //     const images= await prismaClient.generatedImages.createManyAndReturn({
-    //             data: {
-    //                 prompt: prompt,
-    //                 userId: req.body.userId!,
-    //                 modelId: parsedBody.data.modelId,
-    //                 imageUrl:"",
-    //                 falAiRequestId: request_id
-                    
-        
-    //             }
-   
-   
+    //     request_ids.push({request_id});
     // })
-    const request_ids: { request_id: string }[] = [];
-    prompts.forEach(async(prompt) => {
-        const {request_id, response_url} = await falAiModel.generateImage(prompt.prompt, model?.tensorPath ?? "")
-        request_ids.push({request_id});
-    })
+    console.log("Req_idsss",requestIds)
     const images= await prismaClient.generatedImages.createManyAndReturn({
         data: prompts.map((prompt, index) => ({
             prompt: prompt.prompt,
             userId: req.body.userId!,
             modelId: parsedBody.data.modelId,
             imageUrl:"",
-            falAiRequestId: request_ids[index].request_id
+            falAiRequestId: requestIds[index].request_id 
             
 
         }))
