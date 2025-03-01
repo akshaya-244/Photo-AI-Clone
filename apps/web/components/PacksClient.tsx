@@ -36,7 +36,7 @@ export function PacksClient({ packs }: { packs: Tpack[] }) {
         ))}
       </div>
 
-      <Button
+      <Button className="px-2 "
         onClick={async () => {
           const token = await getToken();
 
