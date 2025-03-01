@@ -48,15 +48,7 @@ export function Camera() {
       {images.map((p) => (
         <ImageCard key={p.id} {...p} />
       ))}
-      {images.map((p) => (
-        <ImageCard key={p.id} {...p} />
-      ))}
-      {images.map((p) => (
-        <ImageCard key={p.id} {...p} />
-      ))}
-      {images.map((p) => (
-        <ImageCard key={p.id} {...p} />
-      ))}
+     
     </div>
   );
 }
