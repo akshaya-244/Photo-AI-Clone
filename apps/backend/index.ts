@@ -13,7 +13,7 @@ app.use(express.json())
 const falAiModel = new FalAIModel()
 const PORT = process.env.PORT || 8080
 const stripe=require("stripe")(process.env.NEXT_STRIPE_SECRET_KEY)
-
+const endpointSecret=process.env.STRIPE_WEBHOOK_SECRET;
 app.get('/pre-signed-url',  (req, res) => {
     const key=  `models/${Date.now()}_${Math.random()}.zip`
     const url =  S3Client.presign(`${key}.zip`,{
@@ -271,27 +271,54 @@ app.post('/fal-ai/webhook/image', async(req, res) => {
         
 })
 
-app.post('/create-payment-intent',async (req, res) => {
-    try{
-        let {amount}= req.body
-        amount=Number(amount)
-        const paymentIntent=await stripe.paymentIntents.create({
-            amount,
-            currency: "usd",
-            automatic_payment_methods: {enabled: true}
-        })
-        res.json({
-            clientSecret: paymentIntent.clientSecret
-        })
-    }
-    catch(e){
-        console.log("Internal Error: ",e)
-        res.json({
-            error: `Internal Server Error: ${e}`
-    })
-    }
-})
-
+// app.post('/webhook/stripe', authMiddleware, async(request, response) => {
+//     console.log("Stripeeeeeeeee")
+//     let event = request.body;
+//     // Only verify the event if you have an endpoint secret defined.
+//     // Otherwise use the basic event deserialized with JSON.parse
+//     if (endpointSecret) {
+//       // Get the signature sent by Stripe
+//       const signature = request.headers['stripe-signature'];
+//       try {
+//         event = stripe.webhooks.constructEvent(
+//           request.body,
+//           signature,
+//           endpointSecret
+//         );
+//         response.json({})
+//       } catch (err) {
+//         console.log(`⚠️  Webhook signature verification failed.`, err.message);
+//         return response.sendStatus(400);
+//       }
+//     }
+  
+//     // Handle the event
+//     switch (event.type) {
+//       case 'payment_intent.succeeded':
+//         const paymentIntent = event.data.object;
+//         console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+//         // Then define and call a method to handle the successful payment intent.
+//         // handlePaymentIntentSucceeded(paymentIntent);
+//         break;
+//       case 'payment_method.attached':
+//         const paymentMethod = event.data.object;
+//         // Then define and call a method to handle the successful attachment of a PaymentMethod.
+//         // handlePaymentMethodAttached(paymentMethod);
+//         break;
+//         case 'checkout.session.completed':
+//             const paymentIntent1 = event.data.object;
+//             console.log(`PaymentIntent for Checkout ${paymentIntent1.amount} was successful!`);
+           
+//             break
+//       default:
+//         // Unexpected event type
+//         console.log(`Unhandled event type ${event.type}.`);
+//     }
+  
+//     // Return a 200 response to acknowledge receipt of the event
+//     response.send();
+//   });
+  
 app.listen(PORT , () => {
     console.log(`Server is running on PORT: ${PORT}` )
 })

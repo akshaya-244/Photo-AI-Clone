@@ -14,12 +14,13 @@ async function getPacks(): Promise<Tpack[]> {
   const res = await axios.get(`${BACKEND_URL}/pack/bulk`);
 
   console.log(res.data.packs);
-  return res.data.packs ?? [];
+  return res.data.packs ;
 }
 export async function Packs() {
   const packs = await getPacks();
+  // setPackId(packs.dat)
   console.log("Packs: ",packs)
-    return <PacksClient packs={packs} />
+    return <PacksClient packs={packs}  />
 
   
   

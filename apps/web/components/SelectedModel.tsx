@@ -10,10 +10,10 @@ interface TModel {
     name: string
     thumbnail: string;
   }
-export function SelectedModels({setselectedModel}: {setselectedModel: (model: string) => void}) {
+export function SelectedModels({selectedModel, setselectedModel}: {selectedModel: string, setselectedModel: (model: string) => void}) {
     const [models, setModels] = useState<TModel[]>([]);
     //   const [selectedModel, setselectedModel] = useState<string>();
-    const [selectedModel, setLocalSelectedModel] = useState<string | null>(null); // Local state for selected model  
+    // const [selectedModel, setLocalSelectedModel] = useState<string | null>(null); // Local state for selected model  
     const [modelLoading, setModelLoading]=useState(true);
       const { getToken } = useAuth();
     
@@ -28,7 +28,7 @@ export function SelectedModels({setselectedModel}: {setselectedModel: (model: st
           if(response.data.models.length === 0)
           {
             setModels([])
-            setLocalSelectedModel(null)
+            // setLocalSelectedModel(null)
             setselectedModel("")
             setModelLoading(false)
           } 
@@ -36,7 +36,7 @@ export function SelectedModels({setselectedModel}: {setselectedModel: (model: st
     
             setModels(response.data.models);
           setselectedModel(response.data.models[0]?.id);
-          setLocalSelectedModel(response.data.models[0]?.id)
+        //   setLocalSelectedModel(response.data.models[0]?.id)
           setModelLoading(false)
           }
           
@@ -56,7 +56,7 @@ export function SelectedModels({setselectedModel}: {setselectedModel: (model: st
         onClick={() => {
           console.log(models);
           setselectedModel(model.id);
-          setLocalSelectedModel(model.id);
+        //   setLocalSelectedModel(model.id);
 
         }}
       >

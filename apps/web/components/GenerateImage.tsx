@@ -1,5 +1,5 @@
 "use client";
-import {  useState } from "react";
+import {  useMemo, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { useAuth } from "@clerk/nextjs";
@@ -9,14 +9,22 @@ import Image from "next/image";
 import { Skeleton } from "./ui/skeleton";
 import { AlertDialogDemo } from "./Popup";
 import { SelectedModels } from "./SelectedModel";
+import { useStripe } from "@stripe/react-stripe-js";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+
+
 
 
 export function GenerateImage() {
  
+
+  
   const [prompt, setPrompt]= useState("")
   const [open, setOpen]=useState(false)
-  const [selectedModel, setselectedModel]= useState<string>();
+  const [selectedModel, setselectedModel]= useState<string>("");
   const { getToken } = useAuth();
+
+ 
 
   const generateImageFunc = async() => {
     const token = await getToken();
@@ -36,7 +44,7 @@ export function GenerateImage() {
   return (
     <div className="flex h-[80vh] items-center justify-center">
       <div>
-        <SelectedModels setselectedModel={setselectedModel}/>
+        <SelectedModels selectedModel={selectedModel} setselectedModel={setselectedModel}/>
      
         <Textarea
           className="w-2xl h-25 py-4 my-2 border border-blue-200 hover:border-blue-300"
@@ -48,7 +56,7 @@ export function GenerateImage() {
             Generate an Image
           </Button>
          <AlertDialogDemo open={open} setOpen={setOpen} title="Image Created Successfully!!!" desc="Please check the generated image in the Camera section"/>
-         
+        
         </div>
         
       </div>

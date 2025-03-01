@@ -3,28 +3,54 @@ import convertToSubcurrency from "@/app/lib/convertToSubcurrency"
 import {Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 import CheckoutPage from "./CheckoutPage"
+import { useAuth, useSession } from "@clerk/nextjs"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { User } from "@clerk/nextjs/server"
+import axios from "axios"
+import { BACKEND_URL } from "@/app/config"
 
 const stripePromise = loadStripe("pk_test_51QwaTVK5Pp5ZCojp8SVsDy0hgLvWfwdoUuoQUN8HquYFwystygIafb2ruskUOn0YNdUTEpzh4xIDvpEMky40mXpf00hZoLSMj8" )  
+export const plans=[
+    {
+        link: process.env.NODE_ENV==="development" ? "https://buy.stripe.com/test_eVa5nUfcIdRN6Zy3cc": '',
+        priceId: process.env.NODE_ENV === "development" ? 'prod_RrHOo45aUYZDXG' : '',
+        price: 5,
+
+
+    }
+]
 export default function StripeInt(){
-    const amount=10.90
+    // const {data: session}=useSession();
+    const [plan, setPlan]=useState(plans[0])
+    const { getToken } = useAuth();
+    const [user, setUser] = useState<User>();
+    const [loading, setIsLoading]=useState(false)
 
-    return <main className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500">
-        <div className="mb-10">
-            <h1 className="text-4xl font-extrabold mb-2">
-                Akshaya has requested
-            </h1>
-            <span className="font-bold"> ${amount}</span>
+    useEffect(() => {
+        const getUser = async () => {
+          const token = await getToken();
+          if (token) {
+            const res = await axios.get(`${BACKEND_URL}/user`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+    
+            setIsLoading(true);
+            setUser(res.data.user);
+          }
+        };
+    
+        getUser();
+      }, []);
+    
+    return <div>
+        <div className="space-y-2">
+            <Link 
+            className="btn btn-primary btn-block text-lg"
+            target="_blank"
+            href={plan?.link!}>Pay</Link>
         </div>
-
-        <Elements stripe={stripePromise}
-        options={{
-            mode: "payment",
-            amount: convertToSubcurrency(amount),
-            currency:"usd",
-        }}
-        >
-            <CheckoutPage amount={amount} />
-        </Elements>
-         
-    </main>
+    </div>
 }
