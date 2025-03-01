@@ -11,6 +11,7 @@ import { AlertDialogDemo } from "./Popup";
 import { SelectedModels } from "./SelectedModel";
 import { useStripe } from "@stripe/react-stripe-js";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { toast } from "sonner";
 
 
 
@@ -39,6 +40,7 @@ export function GenerateImage() {
       setOpen(true)
       console.log(res)
       setPrompt("")
+      toast("Image Generated!!! Please check your image in the Camera section")
   }
   
   return (
@@ -55,7 +57,6 @@ export function GenerateImage() {
           <Button className="py-6 text-lg" variant={"secondary"} onClick={generateImageFunc} >
             Generate an Image
           </Button>
-         <AlertDialogDemo open={open} setOpen={setOpen} title="Image Created Successfully!!!" desc="Please check the generated image in the Camera section"/>
         
         </div>
         

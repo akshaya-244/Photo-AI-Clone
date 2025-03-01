@@ -20,8 +20,7 @@ export default function Hero() {
     "https://v3.fal.media/files/tiger/vzAnua0GnFpxo4zBayldD_acb8dce5a96d47899f2d1572c5064d04.jpg",
     "https://v3.fal.media/files/rabbit/i0uxtAFcEfkxeEXraOTTo_f9f7cd702a22437983930a57f8b3e44b.jpg",
     "https://v3.fal.media/files/koala/hLTf7P46s9ABCleZ07MZN_cc11e5bf29b549249eaba49a2a297616.jpg",
-    "https://v3.fal.media/files/koala/hLTf7P46s9ABCleZ07MZN_cc11e5bf29b549249eaba49a2a297616.jpg",
-    "https://v3.fal.media/files/koala/hLTf7P46s9ABCleZ07MZN_cc11e5bf29b549249eaba49a2a297616.jpg",
+    "https://v3.fal.media/files/kangaroo/fIHEyd8jstxhwRbTXCdjj_73f06dbc15d44eefb8a6178b8857e84c.jpg"
 
 
   ];

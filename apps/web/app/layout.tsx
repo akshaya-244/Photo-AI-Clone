@@ -6,6 +6,7 @@ import {
 } from '@clerk/nextjs'
 import Appbar from "../components/Appbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,6 +40,7 @@ export default function RootLayout({
           >
         <Appbar />
         {children}
+        <Toaster />
         </ThemeProvider>
       </body>
     </html>

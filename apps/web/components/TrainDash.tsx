@@ -28,6 +28,7 @@ import { useAuth } from "@clerk/nextjs";
 import { BACKEND_URL } from "@/app/config";
 import { GenerateImage } from "./GenerateImage";
 import { AlertDialogDemo } from "./Popup";
+import { toast } from "sonner";
 
 export default function TrainDash() {
 
@@ -86,6 +87,7 @@ export default function TrainDash() {
         Authorization: `Bearer ${token}`
       }
     })
+    toast("This task will take aprroximately 20 mins to complete. Thank you for your patience.")
     console.log("Response: ",response)
     setOpen(true)
   }
@@ -186,7 +188,7 @@ export default function TrainDash() {
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={() => router.push('/')}>Cancel</Button>
           <Button disabled={!zipUrl || !name || !type || !ethnicity || !eyeColor || !age } onClick={trainModelFunc}>Create Model</Button>
-          <AlertDialogDemo open={open} setOpen={setOpen} title="Model Created" desc="This task will take aprroximately 20 mins to complete. Thank you for your patience."/>
+          {/* <AlertDialogDemo open={open} setOpen={setOpen} title="Model Created" desc="This task will take aprroximately 20 mins to complete. Thank you for your patience."/> */}
        
         </CardFooter>
       </Card>

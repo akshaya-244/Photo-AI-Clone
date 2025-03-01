@@ -39,6 +39,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "skeleton": "^0.1.2",
+    "sonner": "^2.0.1",
     "stripe": "^17.7.0",
     "tailwind-merge": "^3.0.1",
     "tailwindcss": "^4.0.6",
