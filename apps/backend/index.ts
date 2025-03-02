@@ -4,6 +4,7 @@ import {
   GenerateImage,
   GenerateImagesFromPack,
 } from "@repo/common/types";
+import crypto from 'crypto';
 import { prismaClient } from "@repo/db";
 import { S3Client } from "bun";
 import { FalAIModel } from "./models/FalAIModel";
@@ -26,9 +27,29 @@ const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 app.use(bodyParser.json());
 
+function verifySignature(req) {
+    const clerkSecret = process.env.CLERK_SIGINING_SECRET;
+    const signature = req.headers['clerk-signature']; // Get signature from headers
+    const rawBody = JSON.stringify(req.body);
+
+    if (!signature || !clerkSecret) {
+        return false;
+    }
+
+    const expectedSignature = crypto
+        .createHmac('sha256', clerkSecret)
+        .update(rawBody, 'utf8')
+        .digest('hex');
+
+    return signature === expectedSignature;
+}
+
 // Clerk Webhook Handler
 app.post('/webhooks/clerk', async (req, res) => {
     try {
+        if (!verifySignature(req)) {
+             res.status(401).json({ error: 'Invalid signature' });
+        }
         console.log("Request: ", req)
         const { type, data } = req.body;
 
@@ -64,76 +85,76 @@ app.post('/webhooks/clerk', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-app.post(
-  "/webhook/stripe",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    console.log("Heppo");
-    let event = req.body;
-    console.log(event);
-    // Only verify the event if you have an endpoint secret defined.
-    // Otherwise use the basic event deserialized with JSON.parse
-    if (endpointSecret) {
-      // Get the signature sent by Stripe
-      const signature = req.headers["stripe-signature"];
-      try {
-        event = await stripe.webhooks.constructEventAsync(
-          req.body,
-          signature,
-          endpointSecret
-        );
-        res.json({});
-      } catch (err) {
-        console.log(`⚠️  Webhook signature verification failed.`, err.message);
-        res.sendStatus(400);
-      }
-    }
+// app.post(
+//   "/webhook/stripe",
+//   express.raw({ type: "application/json" }),
+//   async (req, res) => {
+//     console.log("Heppo");
+//     let event = req.body;
+//     console.log(event);
+//     // Only verify the event if you have an endpoint secret defined.
+//     // Otherwise use the basic event deserialized with JSON.parse
+//     if (endpointSecret) {
+//       // Get the signature sent by Stripe
+//       const signature = req.headers["stripe-signature"];
+//       try {
+//         event = await stripe.webhooks.constructEventAsync(
+//           req.body,
+//           signature,
+//           endpointSecret
+//         );
+//         res.json({});
+//       } catch (err) {
+//         console.log(`⚠️  Webhook signature verification failed.`, err.message);
+//         res.sendStatus(400);
+//       }
+//     }
 
-    // Handle the event
-    switch (event.type) {
-      case "checkout.session.completed":
-        const session = await stripe.checkout.sessions.retrieve(
-          event.data.object.id,
-          {
-            expand: ["line_items"],
-          }
-        );
-        console.log("SEssion: ", session);
-        const customerEmail = session?.customer_details.email;
-        const priceId = session.line_items.data[0].price.id;
-        const plan = plans.find((p) => p.priceId === priceId);
+//     // Handle the event
+//     switch (event.type) {
+//       case "checkout.session.completed":
+//         const session = await stripe.checkout.sessions.retrieve(
+//           event.data.object.id,
+//           {
+//             expand: ["line_items"],
+//           }
+//         );
+//         console.log("SEssion: ", session);
+//         const customerEmail = session?.customer_details.email ;
+//         const priceId = session.line_items.data[0].price.id;
+//         const plan = plans.find((p) => p.priceId === priceId);
 
-        if (!plan) break;
+//         if (!plan) break;
 
-        let user;
+//         let user;
 
-        user = await prismaClient.user.findFirst({
-          where: {
-            emailId: customerEmail,
-          },
-        });
-        user = await prismaClient.user.update({
-          where: {
-            emailId: customerEmail,
-          },
-          data: {
-            priceId: priceId,
-            hasAccess: true,
-            credits: "100.00"
-          }
+//         user = await prismaClient.user.findFirst({
+//           where: {
+//             emailId: customerEmail,
+//           },
+//         });
+//         user = await prismaClient.user.update({
+//           where: {
+//             emailId: customerEmail,
+//           },
+//           data: {
+//             priceId: priceId,
+//             hasAccess: true,
+//             credits: "100.00"
+//           }
          
-        });
+//         });
 
-        break;
-      default:
-        // Unexpected event type
-        console.log(`Unhandled event type ${event.type}.`);
-    }
+//         break;
+//       default:
+//         // Unexpected event type
+//         console.log(`Unhandled event type ${event.type}.`);
+//     }
 
-    // Return a 200 response to acknowledge receipt of the event
-    res.send();
-  }
-);
+//     // Return a 200 response to acknowledge receipt of the event
+//     res.send();
+//   }
+// );
 
 app.use(express.json());
 
