@@ -40,26 +40,28 @@ function verifySignature(req) {
         .createHmac('sha256', clerkSecret)
         .update(rawBody, 'utf8')
         .digest('hex');
-
+    console.log("expected: ",expectedSignature)
+    console.log("Sign: ", signature)
     return signature === expectedSignature;
 }
 
 // Clerk Webhook Handler
-app.post('/webhooks/clerk', async (req, res) => {
+app.post('/webhooks/clerk',express.raw({ type: "application/json" }), async (req, res) => {
     try {
         if (!verifySignature(req)) {
              res.status(401).json({ error: 'Invalid signature' });
         }
-        console.log("Request: ", req)
+        console.log("Request: ")
         const { type, data } = req.body;
 
         if (type === 'user.created') {
             // Insert new user into database
+            console.log("User created")
             await prismaClient.user.create({
                 data: {
                     id: data.id,
-                    emailId: data.email_addresses[0]?.email_address || '',
-                    username: data.first_name || '',
+                    email: data.email_addresses[0].email_address ,
+                    username: data.first_name ,
                 },
             });
         } else if (type === 'user.updated') {
@@ -67,7 +69,7 @@ app.post('/webhooks/clerk', async (req, res) => {
             await prismaClient.user.update({
                 where: { id: data.id },
                 data: {
-                    emailId: data.email_addresses[0]?.email_address || '',
+                    email: data.email_addresses[0]?.email_address || '',
                     username: data.first_name || '',
                    
                 },

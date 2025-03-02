@@ -17,7 +17,7 @@ model User{
   id String @id @default(uuid())
   username String 
   profilePicture String?
-  emailId String
+  email String @default("")
   hasAccess Boolean?
   priceId String? 
   createdAt DateTime @default(now())
