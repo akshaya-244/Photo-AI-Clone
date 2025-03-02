@@ -11,7 +11,7 @@ import cors from "cors";
 import { authMiddleware } from "./middleware";
 import { fal } from "@fal-ai/client";
 import { plans } from "../web/components/StripeInt.tsx";
-const { Clerk } = require('@clerk/clerk-sdk-node');
+const { Clerk } = require('@clerk/express');
 import bodyParser from 'body-parser';
 
 const app = express();
@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 // Clerk Webhook Handler
 app.post('/webhooks/clerk', async (req, res) => {
     try {
-        console.log("Request: ". req)
+        console.log("Request: ", req)
         const { type, data } = req.body;
 
         if (type === 'user.created') {
