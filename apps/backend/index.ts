@@ -13,14 +13,14 @@ import { fal } from "@fal-ai/client";
 import { plans } from "../web/components/StripeInt.tsx";
 const { Clerk } = require('@clerk/express');
 import bodyParser from 'body-parser';
-
+import Stripe from 'stripe';
 const app = express();
 app.use(cors());
 
 
 const falAiModel = new FalAIModel();
 const PORT = process.env.PORT || 8080;
-const stripe = require("stripe")(process.env.NEXT_STRIPE_SECRET_KEY);
+const stripe =  new Stripe(process.env.NEXT_STRIPE_SECRET_KEY as string);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 
