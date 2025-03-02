@@ -12,19 +12,58 @@ import { authMiddleware } from "./middleware";
 import { fal } from "@fal-ai/client";
 import { plans } from "../web/components/StripeInt.tsx";
 const { Clerk } = require('@clerk/clerk-sdk-node');
+import bodyParser from 'body-parser';
 
 const app = express();
 app.use(cors());
 
-Clerk.configure({
-  apiKey: process.env.CLERK_SECRET_KEY  ,
-});
 
 const falAiModel = new FalAIModel();
 const PORT = process.env.PORT || 8080;
 const stripe = require("stripe")(process.env.NEXT_STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+
+app.use(bodyParser.json());
+
+// Clerk Webhook Handler
+app.post('/webhooks/clerk', async (req, res) => {
+    try {
+        console.log("Request: ". req)
+        const { type, data } = req.body;
+
+        if (type === 'user.created') {
+            // Insert new user into database
+            await prismaClient.user.create({
+                data: {
+                    id: data.id,
+                    emailId: data.email_addresses[0]?.email_address || '',
+                    username: data.first_name || '',
+                },
+            });
+        } else if (type === 'user.updated') {
+            // Update user in database
+            await prismaClient.user.update({
+                where: { id: data.id },
+                data: {
+                    emailId: data.email_addresses[0]?.email_address || '',
+                    username: data.first_name || '',
+                   
+                },
+            });
+        } else if (type === 'user.deleted') {
+            // Delete user from database
+            await prismaClient.user.delete({
+                where: { id: data.id },
+            });
+        }
+
+        res.status(200).json({ message: 'Success' });
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 app.post(
   "/webhook/stripe",
   express.raw({ type: "application/json" }),
