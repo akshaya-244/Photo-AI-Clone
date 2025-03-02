@@ -15,11 +15,14 @@ datasource db {
 
 model User{
   id String @id @default(uuid())
-  username String
+  username String 
   profilePicture String?
+  emailId String
+  hasAccess Boolean?
+  priceId String? 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  credits String @default("0.0")
 }
 
 

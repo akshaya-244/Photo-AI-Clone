@@ -4,7 +4,7 @@ import {Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 import CheckoutPage from "./CheckoutPage"
 import { useAuth, useSession } from "@clerk/nextjs"
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import Link from "next/link"
 import { User } from "@clerk/nextjs/server"
 import axios from "axios"
@@ -24,20 +24,22 @@ export default function StripeInt(){
     // const {data: session}=useSession();
     const [plan, setPlan]=useState(plans[0])
     const { getToken } = useAuth();
-    const [user, setUser] = useState<User>();
+    const [user, setUser] = useState({emailId: ""});
     const [loading, setIsLoading]=useState(false)
+
 
     useEffect(() => {
         const getUser = async () => {
           const token = await getToken();
           if (token) {
-            const res = await axios.get(`${BACKEND_URL}/user`, {
+            const res = await axios.get(`${BACKEND_URL}/users`, {
               headers: {
                 Authorization: `Bearer ${token}`,
-              },
+              },    
             });
     
             setIsLoading(true);
+            console.log("Response: ",res)
             setUser(res.data.user);
           }
         };
@@ -49,8 +51,10 @@ export default function StripeInt(){
         <div className="space-y-2">
             <Link 
             className="btn btn-primary btn-block text-lg"
-            target="_blank"
-            href={plan?.link!}>Pay</Link>
+            target="_blank" 
+            href={plan?.link! + 
+                '?prefilled_email='+ user.emailId
+            }>Pay</Link>
         </div>
     </div>
 }

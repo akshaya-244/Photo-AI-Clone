@@ -19,3 +19,9 @@ export const GenerateImagesFromPack = z.object({
     modelId: z.string(),
     packId: z.string()
 })
+
+export const User=z.object({
+    id :z.string(),
+    username: z.string(),
+   
+})

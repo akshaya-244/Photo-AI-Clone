@@ -13,8 +13,14 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-
+import {  User    } from "@clerk/clerk-sdk-node";
 export default function Hero() {
+
+
+
+
+// Example Usage
+const userId = "user_123"; // Replace with an actual userId
   const images = [
     "https://v3.fal.media/files/kangaroo/f6ka_z_Ex647ZxBVqCsn5_59156c33141244c6958be32d113d5250.jpg",
     "https://v3.fal.media/files/tiger/vzAnua0GnFpxo4zBayldD_acb8dce5a96d47899f2d1572c5064d04.jpg",
