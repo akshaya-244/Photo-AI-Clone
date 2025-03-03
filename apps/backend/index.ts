@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 function verifySignature(req) {
     const clerkSecret = process.env.CLERK_SIGINING_SECRET;
     const signature = req.headers['clerk-signature']; // Get signature from headers
-    const rawBody = JSON.stringify(req.body);
+    const rawBody = req.body
 
     if (!signature || !clerkSecret) {
         return false;
@@ -51,8 +51,8 @@ app.post('/webhooks/clerk',express.raw({ type: "application/json" }), async (req
         if (!verifySignature(req)) {
              res.status(401).json({ error: 'Invalid signature' });
         }
-        console.log("Request: ")
         const { type, data } = req.body;
+        console.log("Request: ", data)
 
         if (type === 'user.created') {
             // Insert new user into database
@@ -64,16 +64,16 @@ app.post('/webhooks/clerk',express.raw({ type: "application/json" }), async (req
                     username: data.first_name ,
                 },
             });
-        } else if (type === 'user.updated') {
-            // Update user in database
-            await prismaClient.user.update({
-                where: { id: data.id },
-                data: {
-                    email: data.email_addresses[0]?.email_address || '',
-                    username: data.first_name || '',
+        // } else if (type === 'user.updated') {
+        //     // Update user in database
+        //     await prismaClient.user.update({
+        //         where: { id: data.id },
+        //         data: {
+        //             email: data.email_addresses[0]?.email_address || '',
+        //             username: data.first_name || '',
                    
-                },
-            });
+        //         },
+        //     });
         } else if (type === 'user.deleted') {
             // Delete user from database
             await prismaClient.user.delete({
