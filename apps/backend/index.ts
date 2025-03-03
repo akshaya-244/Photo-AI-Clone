@@ -64,16 +64,16 @@ app.post('/webhooks/clerk',express.raw({ type: "application/json" }), async (req
                     username: data.first_name ,
                 },
             });
-        // } else if (type === 'user.updated') {
-        //     // Update user in database
-        //     await prismaClient.user.update({
-        //         where: { id: data.id },
-        //         data: {
-        //             email: data.email_addresses[0]?.email_address || '',
-        //             username: data.first_name || '',
+        } else if (type === 'user.updated') {
+            // Update user in database
+            await prismaClient.user.update({
+                where: { id: data.id },
+                data: {
+                    email: data.email_addresses[0]?.email_address || '',
+                    username: data.first_name || '',
                    
-        //         },
-        //     });
+                },
+            });
         } else if (type === 'user.deleted') {
             // Delete user from database
             await prismaClient.user.delete({
