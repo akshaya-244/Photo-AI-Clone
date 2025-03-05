@@ -25,7 +25,7 @@ const stripe =  new Stripe(process.env.NEXT_STRIPE_SECRET_KEY as string);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 
 function verifySignature(req) {
     const clerkSecret = process.env.CLERK_SIGINING_SECRET;
@@ -53,8 +53,8 @@ app.post('/webhooks/clerk', async (req, res) => {
         // }
         console.log("I am hitting webhooks/clerk ")
         console.log(req)
-        // const { type, data } = req.body;
-        // console.log("Request: ", data)
+        const { type, data } = req.body;
+        console.log("Request: ", data)
 
         // if (type === 'user.created') {
         //     // Insert new user into database
