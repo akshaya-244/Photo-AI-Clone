@@ -52,7 +52,7 @@ app.post('/webhooks/clerk', async (req, res) => {
         //      res.status(401).json({ error: 'Invalid signature' });
         // }
         console.log("I am hitting webhooks/clerk ")
-        console.log(req.body)
+        console.log(req)
         // const { type, data } = req.body;
         // console.log("Request: ", data)
 
