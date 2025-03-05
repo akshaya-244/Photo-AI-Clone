@@ -25,70 +25,6 @@ const stripe =  new Stripe(process.env.NEXT_STRIPE_SECRET_KEY as string);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 
-app.use(bodyParser.json());
-
-function verifySignature(req) {
-    const clerkSecret = process.env.CLERK_SIGINING_SECRET;
-    const signature = req.headers['clerk-signature']; // Get signature from headers
-    const rawBody = req.body
-
-    if (!signature || !clerkSecret) {
-        return false;
-    }
-
-    const expectedSignature = crypto
-        .createHmac('sha256', clerkSecret)
-        .update(rawBody, 'utf8')
-        .digest('hex');
-    console.log("expected: ",expectedSignature)
-    console.log("Sign: ", signature)
-    return signature === expectedSignature;
-}
-
-// Clerk Webhook Handler
-app.post('/webhooks/clerk', async (req, res) => {
-    try {
-        // if (!verifySignature(req)) {
-        //      res.status(401).json({ error: 'Invalid signature' });
-        // }
-        console.log("I am hitting webhooks/clerk ")
-        console.log(req)
-        const { type, data } = req.body;
-        console.log("Request: ", data)
-
-        // if (type === 'user.created') {
-        //     // Insert new user into database
-        //     console.log("User created")
-        //     await prismaClient.user.create({
-        //         data: {
-        //             id: data.id,
-        //             email: data.email_addresses[0].email_address ,
-        //             username: data.first_name,
-        //         },
-        //     });
-        // } else if (type === 'user.updated') {
-        //     // Update user in database
-        //     await prismaClient.user.update({
-        //         where: { id: data.id },
-        //         data: {
-        //             email: data.email_addresses[0]?.email_address || '',
-        //             username: data.first_name || '',
-                   
-        //         },
-        //     });
-        // } else if (type === 'user.deleted') {
-        //     // Delete user from database
-        //     await prismaClient.user.delete({
-        //         where: { id: data.id },
-        //     });
-        // }
-
-        res.status(200).json({ message: 'Success' });
-    } catch (error) {
-        console.error('Error processing webhook:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
 app.post(
   "/webhook/stripe",
   express.raw({ type: "application/json" }),
@@ -144,6 +80,73 @@ app.post(
     res.send();
   }
 );
+
+
+
+app.use(bodyParser.json());
+
+function verifySignature(req) {
+    const clerkSecret = process.env.CLERK_SIGINING_SECRET;
+    const signature = req.headers['clerk-signature']; // Get signature from headers
+    const rawBody = req.body
+
+    if (!signature || !clerkSecret) {
+        return false;
+    }
+
+    const expectedSignature = crypto
+        .createHmac('sha256', clerkSecret)
+        .update(rawBody, 'utf8')
+        .digest('hex');
+    console.log("expected: ",expectedSignature)
+    console.log("Sign: ", signature)
+    return signature === expectedSignature;
+}
+
+// Clerk Webhook Handler
+app.post('/webhooks/clerk', async (req, res) => {
+    try {
+        // if (!verifySignature(req)) {
+        //      res.status(401).json({ error: 'Invalid signature' });
+        // }
+        console.log("I am hitting webhooks/clerk ")
+        console.log(req)
+        const { type, data } = req.body;
+        console.log("Request: ", data)
+
+        if (type === 'user.created') {
+            // Insert new user into database
+            console.log("User created")
+            await prismaClient.user.create({
+                data: {
+                    id: data.id,
+                    email: data.email_addresses[0].email_address ,
+                    username: data.first_name,
+                },
+            });
+        } else if (type === 'user.updated') {
+            // Update user in database
+            await prismaClient.user.update({
+                where: { id: data.id },
+                data: {
+                    email: data.email_addresses[0]?.email_address || '',
+                    username: data.first_name || '',
+                   
+                },
+            });
+        } else if (type === 'user.deleted') {
+            // Delete user from database
+            await prismaClient.user.delete({
+                where: { id: data.id },
+            });
+        }
+
+        res.status(200).json({ message: 'Success' });
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 app.use(express.json());
 
