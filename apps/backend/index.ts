@@ -121,7 +121,11 @@ app.post('/webhooks/clerk', async (req, res) => {
                 data: {
                     id: data.id,
                     email: data.email_addresses[0].email_address ,
+                    profilePicture:data.profile_image_url,
                     username: data.first_name,
+                    credits: 0,
+                    hasAccess: false,
+                    createdAt: new Date(data.created_at)
                 },
             });
         } else if (type === 'user.updated') {
