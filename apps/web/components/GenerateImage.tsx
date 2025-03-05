@@ -12,6 +12,7 @@ import { SelectedModels } from "./SelectedModel";
 import { useStripe } from "@stripe/react-stripe-js";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 
 
@@ -25,22 +26,23 @@ export function GenerateImage() {
   const [selectedModel, setselectedModel]= useState<string>("");
   const { getToken } = useAuth();
 
- 
+ const router=useRouter()
 
   const generateImageFunc = async() => {
-    const token = await getToken();
-    const res=await axios.post(`${BACKEND_URL}/ai/generate`, {
-      modelId: selectedModel,
-      prompt: prompt,
-      num: 1
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }})
-      setOpen(true)
-      console.log(res)
-      setPrompt("")
-      toast("Image Generated!!! Please check your image in the Camera section")
+    router.push("/pricing")
+    // const token = await getToken();
+    // const res=await axios.post(`${BACKEND_URL}/ai/generate`, {
+    //   modelId: selectedModel,
+    //   prompt: prompt,
+    //   num: 1
+    // }, {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   }})
+    //   setOpen(true)
+    //   console.log(res)
+    //   setPrompt("")
+    //   toast("Image Generated!!! Please check your image in the Camera section")
   }
   
   return (

@@ -87,76 +87,48 @@ app.post('/webhooks/clerk',express.raw({ type: "application/json" }), async (req
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-// app.post(
-//   "/webhook/stripe",
-//   express.raw({ type: "application/json" }),
-//   async (req, res) => {
-//     console.log("Heppo");
-//     let event = req.body;
-//     console.log(event);
-//     // Only verify the event if you have an endpoint secret defined.
-//     // Otherwise use the basic event deserialized with JSON.parse
-//     if (endpointSecret) {
-//       // Get the signature sent by Stripe
-//       const signature = req.headers["stripe-signature"];
-//       try {
-//         event = await stripe.webhooks.constructEventAsync(
-//           req.body,
-//           signature,
-//           endpointSecret
-//         );
-//         res.json({});
-//       } catch (err) {
-//         console.log(`⚠️  Webhook signature verification failed.`, err.message);
-//         res.sendStatus(400);
-//       }
-//     }
+app.post(
+  "/webhook/stripe",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    let event = req.body;
+    // Only verify the event if you have an endpoint secret defined.
+    // Otherwise use the basic event deserialized with JSON.parse
+    if (endpointSecret) {
+      // Get the signature sent by Stripe
+      const signature = req.headers["stripe-signature"] || "";
+      try {
+        event = await stripe.webhooks.constructEventAsync(
+          req.body.toString(),
+          signature,
+          endpointSecret
+        );
+        console.log("Entered Try")
+        res.json({});
+      } catch (err) {
+        console.log(`⚠️  Webhook signature verification failed.`, err.message);
+        res.sendStatus(400);
+      }
+    }
 
-//     // Handle the event
-//     switch (event.type) {
-//       case "checkout.session.completed":
-//         const session = await stripe.checkout.sessions.retrieve(
-//           event.data.object.id,
-//           {
-//             expand: ["line_items"],
-//           }
-//         );
-//         console.log("SEssion: ", session);
-//         const customerEmail = session?.customer_details.email ;
-//         const priceId = session.line_items.data[0].price.id;
-//         const plan = plans.find((p) => p.priceId === priceId);
+    // Handle the event
+   if(event.type === "checkout.session.completed"){
+      console.log("Entered Checkout session")
+        const session = await stripe.checkout.sessions.retrieve(
+          event.data.object.id,
+          {
+            expand: ["line_items"],
+          }
+        );
+        console.log("SEssion: ", session);
+        
+      
+    }
 
-//         if (!plan) break;
-
-//         let user;
-
-//         user = await prismaClient.user.findFirst({
-//           where: {
-//             emailId: customerEmail,
-//           },
-//         });
-//         user = await prismaClient.user.update({
-//           where: {
-//             emailId: customerEmail,
-//           },
-//           data: {
-//             priceId: priceId,
-//             hasAccess: true,
-//             credits: "100.00"
-//           }
-         
-//         });
-
-//         break;
-//       default:
-//         // Unexpected event type
-//         console.log(`Unhandled event type ${event.type}.`);
-//     }
-
-//     // Return a 200 response to acknowledge receipt of the event
-//     res.send();
-//   }
-// );
+    // Return a 200 response to acknowledge receipt of the event
+    res.send();
+  }
+);
 
 app.use(express.json());
 
