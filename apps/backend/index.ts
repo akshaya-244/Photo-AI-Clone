@@ -4,7 +4,7 @@ import {
   GenerateImage,
   GenerateImagesFromPack,
 } from "@repo/common/types";
-import crypto from 'crypto';
+import crypto from "crypto";
 import { prismaClient } from "@repo/db";
 import { S3Client } from "bun";
 import { FalAIModel } from "./models/FalAIModel";
@@ -12,18 +12,17 @@ import cors from "cors";
 import { authMiddleware } from "./middleware";
 import { fal } from "@fal-ai/client";
 import { plans } from "../web/components/StripeInt.tsx";
-const { Clerk } = require('@clerk/express');
-import bodyParser from 'body-parser';
-import Stripe from 'stripe';
+const { Clerk } = require("@clerk/express");
+import bodyParser from "body-parser";
+import Stripe from "stripe";
+import { Webhook } from "svix";
 const app = express();
 app.use(cors());
 
-
 const falAiModel = new FalAIModel();
 const PORT = process.env.PORT || 8080;
-const stripe =  new Stripe(process.env.NEXT_STRIPE_SECRET_KEY as string);
+const stripe = new Stripe(process.env.NEXT_STRIPE_SECRET_KEY as string);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
 
 app.post(
   "/webhook/stripe",
@@ -50,30 +49,29 @@ app.post(
     }
 
     // Handle the event
-   if(event.type === "checkout.session.completed"){
+    if (event.type === "checkout.session.completed") {
       // console.log("Entered Checkout session")
-        const session = await stripe.checkout.sessions.retrieve(
-          event.data.object.id,
-          {
-            expand: ["line_items"],
-          }
-        );
+      const session = await stripe.checkout.sessions.retrieve(
+        event.data.object.id,
+        {
+          expand: ["line_items"],
+        }
+      );
 
-        console.log(session.customer_details)
-      
-        const users=await prismaClient.user.update({
-          where:{
-            email: session.customer_details?.email || "",
-          
-          },
-          data:{
-            priceId:session.line_items?.data[0].price?.id,
-            hasAccess: true,
-            credits: session.line_items?.data[0].price?.unit_amount===500 ? 500 : 1000
-          }
+      console.log(session.customer_details);
 
-        })
-        res.json({users})
+      const users = await prismaClient.user.update({
+        where: {
+          email: session.customer_details?.email || "",
+        },
+        data: {
+          priceId: session.line_items?.data[0].price?.id,
+          hasAccess: true,
+          credits:
+            session.line_items?.data[0].price?.unit_amount === 500 ? 500 : 1000,
+        },
+      });
+      res.json({ users });
     }
 
     // Return a 200 response to acknowledge receipt of the event
@@ -81,75 +79,87 @@ app.post(
   }
 );
 
-
-
-app.use(bodyParser.json());
-
-function verifySignature(req) {
-    const clerkSecret = process.env.CLERK_SIGINING_SECRET;
-    const signature = req.headers['clerk-signature']; // Get signature from headers
-    const rawBody = req.body
-
-    if (!signature || !clerkSecret) {
-        return false;
-    }
-
-    const expectedSignature = crypto
-        .createHmac('sha256', clerkSecret)
-        .update(rawBody, 'utf8')
-        .digest('hex');
-    console.log("expected: ",expectedSignature)
-    console.log("Sign: ", signature)
-    return signature === expectedSignature;
-}
+// app.use(bodyParser.json());
 
 // Clerk Webhook Handler
-app.post('/webhooks/clerk', async (req, res) => {
-    try {
-        // if (!verifySignature(req)) {
-        //      res.status(401).json({ error: 'Invalid signature' });
-        // }
-        console.log("I am hitting webhooks/clerk ")
-        console.log(req)
-        const { type, data } = req.body;
-        console.log("Request: ", data)
+app.post("/webhooks/clerk", async (req, res) => {
+  bodyParser.raw({ type: "application/json" }),
+    async (req, res) => {
+      const SIGINING_SECRET = process.env.CLERK_SIGINING_SECRET;
+      if (!SIGINING_SECRET) {
+        throw new Error(
+          "Error: Please add SIGNING_SECRET from Clerk Dashboard to .env"
+        );
+      }
+      const wh = new Webhook(SIGINING_SECRET);
 
-        if (type === 'user.created') {
-            // Insert new user into database
-            console.log("User created")
-            await prismaClient.user.create({
-                data: {
-                    id: data.id,
-                    email: data.email_addresses[0].email_address ,
-                    profilePicture:data.profile_image_url,
-                    username: data.first_name,
-                    credits: 0,
-                    hasAccess: false,
-                    createdAt: new Date(data.created_at)
-                },
-            });
-        } else if (type === 'user.updated') {
-            // Update user in database
-            await prismaClient.user.update({
-                where: { id: data.id },
-                data: {
-                    email: data.email_addresses[0]?.email_address || '',
-                    username: data.first_name || '',
-                   
-                },
-            });
-        } else if (type === 'user.deleted') {
-            // Delete user from database
-            await prismaClient.user.delete({
-                where: { id: data.id },
-            });
-        }
+      // Get headers and body
+      const headers = req.headers;
+      const payload = req.body;
 
-        res.status(200).json({ message: 'Success' });
-    } catch (error) {
-        console.error('Error processing webhook:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+      // Get Svix headers for verification
+      const svix_id = headers["svix-id"];
+      const svix_timestamp = headers["svix-timestamp"];
+      const svix_signature = headers["svix-signature"];
+
+      // If there are no headers, error out
+      if (!svix_id || !svix_timestamp || !svix_signature) {
+        return void res.status(400).json({
+          success: false,
+          message: "Error: Missing svix headers",
+        });
+      }
+
+      let evt;
+      try {
+        evt = wh.verify(JSON.stringify(payload), {
+          "svix-id": svix_id as string,
+          "svix-timestamp": svix_timestamp as string,
+          "svix-signature": svix_signature as string,
+        });
+      } catch (err) {
+        console.log("Error: Could not verify webhook:", err.message);
+        res.status(400).json({
+          success: false,
+          message: err.message,
+        });
+      }
+
+      const { data } = evt.data;
+      const type = evt.type;
+
+      if (type === "user.created") {
+        // Insert new user into database
+        console.log("User created");
+        await prismaClient.user.create({
+          data: {
+            id: data.id,
+            email: data.email_addresses[0].email_address,
+            profilePicture: data.profile_image_url,
+            username: data.first_name,
+            credits: 0,
+            hasAccess: false,
+            createdAt: new Date(data.created_at),
+          },
+        });
+      } else if (type === "user.updated") {
+        // Update user in database
+        await prismaClient.user.update({
+          where: { id: data.id },
+          data: {
+            email: data.email_addresses[0]?.email_address || "",
+            username: data.first_name || "",
+          },
+        });
+      } else if (type === "user.deleted") {
+        // Delete user from database
+        await prismaClient.user.delete({
+          where: { id: data.id },
+        });
+      }
+
+      res.status(200).json({ message: "Success" });
+    };
 });
 
 app.use(express.json());
