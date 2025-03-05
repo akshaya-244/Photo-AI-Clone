@@ -46,11 +46,12 @@ function verifySignature(req) {
 }
 
 // Clerk Webhook Handler
-app.post('/webhooks/clerk',express.raw({ type: "application/json" }), async (req, res) => {
+app.post('/webhooks/clerk', async (req, res) => {
     try {
         // if (!verifySignature(req)) {
         //      res.status(401).json({ error: 'Invalid signature' });
         // }
+        console.log("I am hitting webhooks/clerk ")
         const { type, data } = req.body;
         console.log("Request: ", data)
 
@@ -61,7 +62,7 @@ app.post('/webhooks/clerk',express.raw({ type: "application/json" }), async (req
                 data: {
                     id: data.id,
                     email: data.email_addresses[0].email_address ,
-                    username: data.first_name ,
+                    username: data.first_name,
                 },
             });
         } else if (type === 'user.updated') {
