@@ -25,7 +25,7 @@ const stripe =  new Stripe(process.env.NEXT_STRIPE_SECRET_KEY as string);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 function verifySignature(req) {
     const clerkSecret = process.env.CLERK_SIGINING_SECRET;
@@ -96,14 +96,14 @@ app.post(
     // Otherwise use the basic event deserialized with JSON.parse
     if (endpointSecret) {
       // Get the signature sent by Stripe
-      const signature = req.headers["stripe-signature"] || "";
+      const signature = req.headers["stripe-signature"];
       try {
         event = await stripe.webhooks.constructEventAsync(
-          req.body.toString(),
+          req.body,
           signature,
           endpointSecret
         );
-        console.log("Entered Try")
+        // console.log("Entered Try")
         res.json({});
       } catch (err) {
         console.log(`⚠️  Webhook signature verification failed.`, err.message);
@@ -113,16 +113,29 @@ app.post(
 
     // Handle the event
    if(event.type === "checkout.session.completed"){
-      console.log("Entered Checkout session")
+      // console.log("Entered Checkout session")
         const session = await stripe.checkout.sessions.retrieve(
           event.data.object.id,
           {
             expand: ["line_items"],
           }
         );
-        console.log("SEssion: ", session);
-        
+
+        console.log(session.customer_details)
       
+        const users=await prismaClient.user.update({
+          where:{
+            email: session.customer_details?.email || "",
+          
+          },
+          data:{
+            priceId:session.line_items?.data[0].price?.id,
+            hasAccess: true,
+            credits: session.line_items?.data[0].price?.unit_amount===500 ? 500 : 1000
+          }
+
+        })
+        res.json({users})
     }
 
     // Return a 200 response to acknowledge receipt of the event

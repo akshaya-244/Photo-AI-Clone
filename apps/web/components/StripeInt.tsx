@@ -24,7 +24,7 @@ export default function StripeInt(){
     // const {data: session}=useSession();
     const [plan, setPlan]=useState(plans[0])
     const { getToken } = useAuth();
-    const [user, setUser] = useState({emailId: ""});
+    const [user, setUser] = useState({email: ""});
     const [loading, setIsLoading]=useState(false)
 
 
@@ -53,7 +53,7 @@ export default function StripeInt(){
             className="btn btn-primary btn-block text-lg"
             target="_blank" 
             href={plan?.link! + 
-                '?prefilled_email='+ user.emailId
+                '?prefilled_email='+ user.email
             }>Pay</Link>
         </div>
     </div>

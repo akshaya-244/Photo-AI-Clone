@@ -10,8 +10,8 @@ export default function PricingApp() {
             Find the perfect plan for your needs. Every plan includes access to our core features.
         </div>
         <div className="flex gap-x-8">
-        <Pricing name="Basic" credits="500" price="50" description="Basic support" border={false}/>
-        <Pricing name="Premium" credits="1000" price="100" description="Premium support" border={true}/>
+        <Pricing name="Basic" credits={500} price="50" description="Basic support" border={false}/>
+        <Pricing name="Premium" credits={1000} price="100" description="Premium support" border={true}/>
 
         </div>
         

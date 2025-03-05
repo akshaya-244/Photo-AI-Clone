@@ -1,6 +1,6 @@
 "use client"
 import * as React from "react";
-
+import {  useEffect, useState } from "react"
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,7 +26,7 @@ import { useAuth } from "@clerk/nextjs";
 
 interface PriceInt {
   name: string;
-  credits: string;
+  credits: number;
   price: string;
   description: string;
   border: boolean;
@@ -58,10 +58,11 @@ export  default function Pricing({
   description,
   border,
 }: PriceInt) {
-    const [plan, setPlan]=React.useState(plans[0])
-    const [user, setUser]=React.useState({emailId: ""})
+    const [plan, setPlan]=useState(plans[0])
+    const [user, setUser]=useState({email: ""})
+    const [loading, setLoading]=useState(false)
     const {getToken} = useAuth()
-    React.useEffect(() => {
+    useEffect(() => {
         (async () => {
             const token=await getToken()
             if(token){
@@ -70,8 +71,10 @@ export  default function Pricing({
                         Authorization: `Bearer ${token}`
                     }
                 })
-
+                setLoading(true);
                 setUser(res.data.user)
+            console.log("Get user: ",  res.data)
+
             }
            
         })()
@@ -101,7 +104,7 @@ export  default function Pricing({
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Link className="bg-amber-50 text-black font-bold rounded-xl px-8 py-4" href={plan?.link+ '?prefilled_email='+  user.emailId}>Get {credits} credits</Link>
+          <Link className="bg-amber-50 text-black font-bold rounded-xl px-8 py-4" href={plan?.link+ '?prefilled_email='+  user.email}>Get {credits} credits</Link>
         </CardFooter>
       </Card>
     </div>

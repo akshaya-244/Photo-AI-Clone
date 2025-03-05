@@ -17,12 +17,12 @@ model User{
   id String @id @default(uuid())
   username String 
   profilePicture String?
-  email String @default("")
+  email String @unique
   hasAccess Boolean?
   priceId String? 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  credits String @default("0.0")
+  credits Int @default(0)
 }
 
 
