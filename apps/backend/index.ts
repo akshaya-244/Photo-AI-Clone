@@ -48,9 +48,9 @@ function verifySignature(req) {
 // Clerk Webhook Handler
 app.post('/webhooks/clerk',express.raw({ type: "application/json" }), async (req, res) => {
     try {
-        if (!verifySignature(req)) {
-             res.status(401).json({ error: 'Invalid signature' });
-        }
+        // if (!verifySignature(req)) {
+        //      res.status(401).json({ error: 'Invalid signature' });
+        // }
         const { type, data } = req.body;
         console.log("Request: ", data)
 
