@@ -97,7 +97,7 @@ app.post("/webhooks/clerk", async (req, res) => {
       // Get headers and body
       const headers = req.headers;
       const payload = req.body;
-  console.log("Entered webhooks with payload:"payload)
+  console.log("Entered webhooks with payload:",payload)
 
       // Get Svix headers for verification
       const svix_id = headers["svix-id"];
