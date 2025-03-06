@@ -83,6 +83,7 @@ app.post(
 
 // Clerk Webhook Handler
 app.post("/webhooks/clerk", async (req, res) => {
+  console.log("Entered webhooks")
   bodyParser.raw({ type: "application/json" }),
     async (req, res) => {
       const SIGINING_SECRET = process.env.CLERK_SIGINING_SECRET;
@@ -96,6 +97,7 @@ app.post("/webhooks/clerk", async (req, res) => {
       // Get headers and body
       const headers = req.headers;
       const payload = req.body;
+  console.log("Entered webhooks with payload:"payload)
 
       // Get Svix headers for verification
       const svix_id = headers["svix-id"];
@@ -124,7 +126,7 @@ app.post("/webhooks/clerk", async (req, res) => {
           message: err.message,
         });
       }
-
+      console.log("HEloooooooooo")
       const { data } = evt.data;
       const type = evt.type;
       console.log(data)
