@@ -82,7 +82,7 @@ app.post(
 // app.use(bodyParser.json());
 
 // Clerk Webhook Handler
-app.post("/webhooks/clerk", async (req, res) => {
+app.post("/webhooks/clerk", express.raw({ type: "application/json" }), async (req, res) => {
   console.log("Entered webhooks")
     // bodyParser.json()
     
@@ -114,7 +114,7 @@ app.post("/webhooks/clerk", async (req, res) => {
 
       let evt:any;
       try {
-        evt = wh.verify(JSON.stringify(payload), {
+        evt = wh.verify(payload.toString(), {
           "svix-id": svix_id as string,
           "svix-timestamp": svix_timestamp as string,
           "svix-signature": svix_signature as string,
