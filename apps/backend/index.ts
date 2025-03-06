@@ -112,9 +112,9 @@ app.post("/webhooks/clerk", async (req, res) => {
         });
       }
 
-      let evt;
+      let evt:any;
       try {
-        evt = wh.verify(payload, {
+        evt = wh.verify(JSON.stringify(payload), {
           "svix-id": svix_id as string,
           "svix-timestamp": svix_timestamp as string,
           "svix-signature": svix_signature as string,
@@ -126,39 +126,38 @@ app.post("/webhooks/clerk", async (req, res) => {
           message: err.message,
         });
       }
-      evt=bodyParser.json(evt)
       console.log("HEloooooooooo")
       const { data } = evt.data;
       const type = evt.type;
-      console.log(data)
+      // console.log(data)
       console.log(type)
       if (type === "user.created") {
         // Insert new user into database
         console.log("User created");
         await prismaClient.user.create({
           data: {
-            id: data.id,
-            email: data.email_addresses[0].email_address,
-            profilePicture: data.profile_image_url,
-            username: data.first_name,
+            id: evt.data.id,
+            email: evt.data.email_addresses[0].email_address,
+            profilePicture: evt.data.profile_image_url,
+            username: evt.data.first_name,
             credits: 0,
             hasAccess: false,
-            createdAt: new Date(data.created_at),
+            createdAt: new Date(evt.data.created_at),
           },
         });
       } else if (type === "user.updated") {
         // Update user in database
         await prismaClient.user.update({
-          where: { id: data.id },
+          where: { id: evt.data.id },
           data: {
-            email: data.email_addresses[0]?.email_address || "",
-            username: data.first_name || "",
+            email: evt.data.email_addresses[0]?.email_address || "",
+            username: evt.data.first_name || "",
           },
         });
       } else if (type === "user.deleted") {
         // Delete user from database
         await prismaClient.user.delete({
-          where: { id: data.id },
+          where: { id: evt.data.id },
         });
       }
 
