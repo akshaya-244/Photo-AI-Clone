@@ -96,7 +96,7 @@ app.post("/webhooks/clerk", async (req, res) => {
 
       // Get headers and body
       const headers = req.headers;
-      const payload = bodyParser.json(req.body);
+      const payload = req.body;
   console.log("Entered webhooks with payload:",payload)
 
       // Get Svix headers for verification
@@ -114,7 +114,7 @@ app.post("/webhooks/clerk", async (req, res) => {
 
       let evt;
       try {
-        evt = wh.verify(JSON.stringify(payload), {
+        evt = wh.verify(payload, {
           "svix-id": svix_id as string,
           "svix-timestamp": svix_timestamp as string,
           "svix-signature": svix_signature as string,
