@@ -33,7 +33,7 @@ app.post(
     // Otherwise use the basic event deserialized with JSON.parse
     if (endpointSecret) {
       // Get the signature sent by Stripe
-      const signature = req.headers["stripe-signature"];
+      const signature = req.headers["stripe-signature"] || "";
       try {
         event = await stripe.webhooks.constructEventAsync(
           req.body,
