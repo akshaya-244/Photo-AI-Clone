@@ -127,7 +127,8 @@ app.post("/webhooks/clerk", async (req, res) => {
 
       const { data } = evt.data;
       const type = evt.type;
-
+      console.log(data)
+      console.log(type)
       if (type === "user.created") {
         // Insert new user into database
         console.log("User created");
