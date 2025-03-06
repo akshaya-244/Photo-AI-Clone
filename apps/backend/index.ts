@@ -84,7 +84,7 @@ app.post(
 // Clerk Webhook Handler
 app.post("/webhooks/clerk", async (req, res) => {
   console.log("Entered webhooks")
-  bodyParser.raw({ type: "application/json" })
+  // bodyParser.raw({ type: "application/json" })
     
       const SIGINING_SECRET = process.env.CLERK_SIGINING_SECRET;
       if (!SIGINING_SECRET) {
