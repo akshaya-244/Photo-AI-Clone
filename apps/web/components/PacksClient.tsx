@@ -46,22 +46,29 @@ export function PacksClient({ packs }: { packs: Tpack[] }) {
               Authorization: `Bearer ${token}`
             }
           })
-          if(userAmount.data.user.credits <=0 ){
+          if(userAmount.data.user.credits <3 ){
             router.push('/pricing')
           }
           else{
-            await axios.post(
-              `${BACKEND_URL}/pack/generate`,
-              {
-                modelId: selectedModelId,
-                packId: packId,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
+            await axios.put(`${BACKEND_URL}/users`,{
+              credits: userAmount.data.user.credits - 3
+            },{
+              headers:{
+                Authorization: `Bearer ${token}`
               }
-            );
+            })
+            // await axios.post(
+            //   `${BACKEND_URL}/pack/generate`,
+            //   {
+            //     modelId: selectedModelId,
+            //     packId: packId,
+            //   },
+            //   {
+            //     headers: {
+            //       Authorization: `Bearer ${token}`,
+            //     },
+            //   }
+            // );
   
             toast("Image Generated!!! Please check your image in the Camera section");
           }

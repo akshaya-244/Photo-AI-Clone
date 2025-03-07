@@ -88,18 +88,27 @@ export default function TrainDash() {
         Authorization: `Bearer ${token}`
       }
     })
-    if(userAmount.data.user.credits <= 0){
+    if(userAmount.data.user.credits <= 50){
       router.push('/pricing')
     }
+
     else{
+
       console.log("Not working")
-      const response=await axios.post(`${BACKEND_URL}/ai/training`, input,{
-        headers: {
+      await axios.put(`${BACKEND_URL}/users`,{
+        credits: userAmount.data.user.credits - 50
+      },{
+        headers:{
           Authorization: `Bearer ${token}`
         }
       })
+      // const response=await axios.post(`${BACKEND_URL}/ai/training`, input,{
+      //   headers: {
+      //     Authorization: `Bearer ${token}`
+      //   }
+      // })
       toast("This task will take aprroximately 20 mins to complete. Thank you for your patience.")
-      console.log("Response: ",response)
+      // console.log("Response: ",response)
       setOpen(true)
     }
  
@@ -196,16 +205,18 @@ export default function TrainDash() {
             }}/>
             </div>
             </div>
-
+            <div className="text-sm">
+            Your request will cost $2.5 per training run (scales linearly with steps). That will be 50 credits
+            </div>
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={() => router.push('/')}>Cancel</Button>
           <Button disabled={!zipUrl || !name || !type || !ethnicity || !eyeColor || !age } onClick={trainModelFunc}>Create Model</Button>
           {/* <AlertDialogDemo open={open} setOpen={setOpen} title="Model Created" desc="This task will take aprroximately 20 mins to complete. Thank you for your patience."/> */}
-       
+            
         </CardFooter>
       </Card>
     </div>
   );
 }
-// Your request will cost $2 per training run (scales linearly with steps). For $2 you can run this model with approximately 1 times.
+// 

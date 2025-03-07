@@ -43,26 +43,24 @@ export function GenerateImage() {
     }
     else{
       const decCredits=await axios.put(`${BACKEND_URL}/users`, {
+        credits: Number(user.data.user.credits) - 1
+      },{
         headers: {
           Authorization: `Bearer ${token}`
         },
-        where:{
-          email: user.data.user.email
-        },
-        data:{
-          credits: Number(user.data.user.credits) - 1
-        }
+        
+        
       })
-      const res=await axios.post(`${BACKEND_URL}/ai/generate`, {
-      modelId: selectedModel,
-      prompt: prompt,
-      num: 1
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }})
+    //   const res=await axios.post(`${BACKEND_URL}/ai/generate`, {
+    //   modelId: selectedModel,
+    //   prompt: prompt,
+    //   num: 1
+    // }, {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   }})
       setOpen(true)
-      console.log(res)
+      // console.log(res)
       setPrompt("")
       toast("Image Generated!!! Please check your image in the Camera section")
     }

@@ -11,7 +11,7 @@ import { FalAIModel } from "./models/FalAIModel";
 import cors from "cors";
 import { authMiddleware } from "./middleware";
 import { fal } from "@fal-ai/client";
-import { plans } from "../web/components/StripeInt.tsx";
+// import { plans } from "../web/components/StripeInt.tsx";
 const { Clerk } = require("@clerk/express");
 import bodyParser from "body-parser";
 import Stripe from "stripe";
@@ -196,6 +196,18 @@ app.get("/pre-signed-url", (req, res) => {
   });
 });
 
+
+app.put("/users",authMiddleware, async(req, res)=>{
+  const user=await prismaClient.user.update({
+    where: {
+      id: req.body.userId
+    },
+    data:{
+      credits: req.body.credits
+    }
+  })
+  res.json({user})
+})
 app.get("/users", authMiddleware, async (req, res) => {
   console.log("Req.body", req.body);
   const user = await prismaClient.user.findFirst({

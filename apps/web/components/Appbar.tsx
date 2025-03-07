@@ -13,18 +13,19 @@ import axios from 'axios'
 import { BACKEND_URL } from '@/app/config'
 export default function Appbar() {
   const {getToken} =useAuth()
-  const token= getToken()
   const [credits, setCredits] = useState(0)
   useEffect(() => {
     const getUser = async() => {
+      const token=await getToken()
+
       const user=await axios.get(`${BACKEND_URL}/users`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
        
       }) 
-      console.log(user)
-      setCredits(user.data.credits)
+      console.log("User: ",user)
+      setCredits(user.data.user.credits)
     }
     getUser()
   })
@@ -44,8 +45,8 @@ export default function Appbar() {
           </SignedOut>
           <SignedIn>
             <div className='flex gap-4'>
-            <div>
-              Credits:{credits}
+            <div className='text-sm mt-1'>
+              {credits} credits
             </div>
             <div>
               <UserButton />
