@@ -32,17 +32,27 @@ export function GenerateImage() {
   const generateImageFunc = async() => {
    
     const token = await getToken();
-    const userAmount= await axios.get(`${BACKEND_URL}/users`,{
+    const user= await axios.get(`${BACKEND_URL}/users`,{
       headers:{
         Authorization: `Bearer ${token}`
       }
     })
-    console.log(userAmount)
-    if(userAmount.data.user.credits <= 0){
+    // console.log(userAmount)
+    if(user.data.user.credits < 1){
       router.push("/pricing")
     }
     else{
-      // console.log("Not working yet")
+      const decCredits=await axios.put(`${BACKEND_URL}/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        where:{
+          email: user.data.user.email
+        },
+        data:{
+          credits: Number(user.data.user.credits) - 1
+        }
+      })
       const res=await axios.post(`${BACKEND_URL}/ai/generate`, {
       modelId: selectedModel,
       prompt: prompt,
@@ -65,11 +75,17 @@ export function GenerateImage() {
         <SelectedModels selectedModel={selectedModel} setselectedModel={setselectedModel}/>
      
         <Textarea
-          className="w-2xl h-25 py-4 my-2 border border-blue-200 hover:border-blue-300"
+          className="w-2xl h-25 py-4 my-2 border mt-4 border-blue-200 hover:border-blue-300"
           placeholder="Type your prompt here."
           onChange={(e) => setPrompt(e.target.value)}
         />
+        <div className="text-slate-400">
+        Your request will cost $0.05 per megapixel.
+
+          That will be 1 credit
+        </div>
         <div className="flex justify-center py-4">
+
           <Button className="py-6 text-lg" variant={"secondary"} onClick={generateImageFunc} >
             Generate an Image
           </Button>

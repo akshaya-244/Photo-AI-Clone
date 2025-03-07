@@ -45,7 +45,7 @@ export function SelectedModels({selectedModel, setselectedModel}: {selectedModel
     
   return  <div>
 
-    <div className="text-2xl pb-2 flex justify-center font-bold ">
+    <div className="text-2xl pb-2 mb-4 flex justify-center font-bold ">
     Select Model
   </div>
 <div className="grid grid-cols-4 gap-1">

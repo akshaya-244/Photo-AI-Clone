@@ -30,6 +30,7 @@ interface PriceInt {
   price: string;
   description: string;
   border: boolean;
+  credit5: number
 }
 export const plans = [
   {
@@ -57,8 +58,8 @@ export  default function Pricing({
   price,
   description,
   border,
+  credit5
 }: PriceInt) {
-    const [plan, setPlan]=useState(plans[0])
     const [user, setUser]=useState({email: ""})
     const [loading, setLoading]=useState(false)
     const {getToken} = useAuth()
@@ -104,7 +105,7 @@ export  default function Pricing({
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Link className="bg-amber-50 text-black font-bold rounded-xl px-8 py-4" href={plan?.link+ '?prefilled_email='+  user.email}>Get {credits} credits</Link>
+          <Link className="bg-amber-50 text-black font-bold rounded-xl px-8 py-4" href={plans[credit5]?.link+ '?prefilled_email='+  user.email}>Get {credits} credits</Link>
         </CardFooter>
       </Card>
     </div>

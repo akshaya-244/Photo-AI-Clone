@@ -63,7 +63,13 @@ app.post(
       );
 
       console.log("Session customer detailss ",session.customer_details);
+      const existingCredits= await prismaClient.user.findFirst({
+        where: {
+          email: session.customer_details?.email || "",
+        },
 
+      })
+      console.log(existingCredits?.credits )
       const users = await prismaClient.user.update({
         where: {
           email: session.customer_details?.email || "",
@@ -72,7 +78,7 @@ app.post(
           priceId: session.line_items?.data[0].price?.id,
           hasAccess: true,
           credits:
-            session.line_items?.data[0].price?.unit_amount === 500 ? 500 : 1000,
+            Number(existingCredits?.credits) +( session.line_items?.data[0].price?.unit_amount === 100 ? 100 : 200),
         },
       });
       console.log(users)

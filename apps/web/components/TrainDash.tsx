@@ -208,3 +208,4 @@ export default function TrainDash() {
     </div>
   );
 }
+// Your request will cost $2 per training run (scales linearly with steps). For $2 you can run this model with approximately 1 times.
