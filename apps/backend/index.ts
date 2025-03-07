@@ -28,7 +28,10 @@ app.post(
   "/webhook/stripe",
   express.raw({ type: "application/json" }),
   async (req, res) => {
+    console.log("Webhook stripe")
     let event = req.body;
+    console.log("Webhook stripe1, ", event)
+
     // Only verify the event if you have an endpoint secret defined.
     // Otherwise use the basic event deserialized with JSON.parse
     if (endpointSecret) {
@@ -47,10 +50,11 @@ app.post(
         res.sendStatus(400);
       }
     }
-
+    console.log(event)
+    console.log("Event Type: ",event.type)
     // Handle the event
     if (event.type === "checkout.session.completed") {
-      // console.log("Entered Checkout session")
+      console.log("Entered Checkout session")
       const session = await stripe.checkout.sessions.retrieve(
         event.data.object.id,
         {
@@ -58,7 +62,7 @@ app.post(
         }
       );
 
-      console.log(session.customer_details);
+      console.log("Session customer detailss ",session.customer_details);
 
       const users = await prismaClient.user.update({
         where: {
@@ -71,6 +75,7 @@ app.post(
             session.line_items?.data[0].price?.unit_amount === 500 ? 500 : 1000,
         },
       });
+      console.log(users)
       res.json({ users });
     }
 

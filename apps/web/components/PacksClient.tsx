@@ -8,11 +8,13 @@ import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { BACKEND_URL } from "@/app/config";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function PacksClient({ packs }: { packs: Tpack[] }) {
   const { getToken } = useAuth();
   const [selectedModelId, setSelectedModelId] = useState<string>("");
   const [packId, setPackId] = useState<string>(packs[0]?.id || "");
+  const router=useRouter()
   return (
     <div>
       <div className="py-4">
@@ -39,21 +41,31 @@ export function PacksClient({ packs }: { packs: Tpack[] }) {
       <Button className="px-2 "
         onClick={async () => {
           const token = await getToken();
-
-          await axios.post(
-            `${BACKEND_URL}/pack/generate`,
-            {
-              modelId: selectedModelId,
-              packId: packId,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+          const userAmount=await axios.get(`${BACKEND_URL}/users`,{
+            headers:{
+              Authorization: `Bearer ${token}`
             }
-          );
-
-          toast("Image Generated!!! Please check your image in the Camera section");
+          })
+          if(userAmount.data.user.credits <=0 ){
+            router.push('/pricing')
+          }
+          else{
+            await axios.post(
+              `${BACKEND_URL}/pack/generate`,
+              {
+                modelId: selectedModelId,
+                packId: packId,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+  
+            toast("Image Generated!!! Please check your image in the Camera section");
+          }
+          
         }}
       >
         Generate

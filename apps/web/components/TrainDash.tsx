@@ -81,15 +81,28 @@ export default function TrainDash() {
       zipUrl,
       
     }
+
     const token=await getToken()
-    const response=await axios.post(`${BACKEND_URL}/ai/training`, input,{
-      headers: {
+    const userAmount=await axios.get(`${BACKEND_URL}/users`,{
+      headers:{
         Authorization: `Bearer ${token}`
       }
     })
-    toast("This task will take aprroximately 20 mins to complete. Thank you for your patience.")
-    console.log("Response: ",response)
-    setOpen(true)
+    if(userAmount.data.user.credits <= 0){
+      router.push('/pricing')
+    }
+    else{
+      console.log("Not working")
+      const response=await axios.post(`${BACKEND_URL}/ai/training`, input,{
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      toast("This task will take aprroximately 20 mins to complete. Thank you for your patience.")
+      console.log("Response: ",response)
+      setOpen(true)
+    }
+ 
   }
 
   return (
