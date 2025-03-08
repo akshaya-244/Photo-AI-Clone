@@ -38,7 +38,7 @@ app.post(
       // Get the signature sent by Stripe
       const signature = req.headers["stripe-signature"] || "";
       try {
-        event =  stripe.webhooks.constructEvent(
+        event = await stripe.webhooks.constructEventAsync(
           req.body,
           signature,
           endpointSecret
@@ -50,7 +50,7 @@ app.post(
         res.sendStatus(400);
       }
     }
-    console.log(event)
+    console.log(JSON.stringify(event.type))
     console.log("Event Type: ",event.type)
     // Handle the event
     if (event.type === "checkout.session.completed") {
