@@ -51,14 +51,14 @@ export function GenerateImage() {
         
         
       })
-    //   const res=await axios.post(`${BACKEND_URL}/ai/generate`, {
-    //   modelId: selectedModel,
-    //   prompt: prompt,
-    //   num: 1
-    // }, {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //   }})
+      const res=await axios.post(`${BACKEND_URL}/ai/generate`, {
+      modelId: selectedModel,
+      prompt: prompt,
+      num: 1
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }})
       setOpen(true)
       // console.log(res)
       setPrompt("")

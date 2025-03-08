@@ -57,18 +57,18 @@ export function PacksClient({ packs }: { packs: Tpack[] }) {
                 Authorization: `Bearer ${token}`
               }
             })
-            // await axios.post(
-            //   `${BACKEND_URL}/pack/generate`,
-            //   {
-            //     modelId: selectedModelId,
-            //     packId: packId,
-            //   },
-            //   {
-            //     headers: {
-            //       Authorization: `Bearer ${token}`,
-            //     },
-            //   }
-            // );
+            await axios.post(
+              `${BACKEND_URL}/pack/generate`,
+              {
+                modelId: selectedModelId,
+                packId: packId,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
   
             toast("Image Generated!!! Please check your image in the Camera section");
           }

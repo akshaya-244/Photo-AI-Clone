@@ -102,11 +102,11 @@ export default function TrainDash() {
           Authorization: `Bearer ${token}`
         }
       })
-      // const response=await axios.post(`${BACKEND_URL}/ai/training`, input,{
-      //   headers: {
-      //     Authorization: `Bearer ${token}`
-      //   }
-      // })
+      const response=await axios.post(`${BACKEND_URL}/ai/training`, input,{
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       toast("This task will take aprroximately 20 mins to complete. Thank you for your patience.")
       // console.log("Response: ",response)
       setOpen(true)
