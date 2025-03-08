@@ -39,7 +39,7 @@ export const plans = [
         ? "https://buy.stripe.com/test_eVa5nUfcIdRN6Zy3cc"
         : "https://buy.stripe.com/test_aEU9Ea3u0dRNbfOeUV",
     priceId:
-      process.env.NODE_ENV === "development" ? "prod_RrHOo45aUYZDXG" : "",
+      process.env.NODE_ENV === "development" ? "prod_RrHOo45aUYZDXG" : "prod_RrHOo45aUYZDXG",
     price: 5,
   },
   {

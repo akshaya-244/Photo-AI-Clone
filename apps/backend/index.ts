@@ -38,12 +38,12 @@ app.post(
       // Get the signature sent by Stripe
       const signature = req.headers["stripe-signature"] || "";
       try {
-        event = await stripe.webhooks.constructEventAsync(
+        event =  stripe.webhooks.constructEvent(
           req.body,
           signature,
           endpointSecret
         );
-        // console.log("Entered Try")
+        console.log("Entered Try")
         res.json({});
       } catch (err) {
         console.log(`⚠️  Webhook signature verification failed.`, err.message);
