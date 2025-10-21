@@ -21,7 +21,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { UploadModal } from "@/components/ui/upload";
 import React, { useState } from "react";
-import {TrainModelInput} from "@repo/common/inferred_types"
+import {TrainModelInput} from "@repo/common"
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
