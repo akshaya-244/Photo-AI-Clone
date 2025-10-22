@@ -17,6 +17,7 @@ import bodyParser from "body-parser";
 import Stripe from "stripe";
 import { Webhook } from "svix";
 const app = express();
+
 app.use(cors());
 
 const falAiModel = new FalAIModel();

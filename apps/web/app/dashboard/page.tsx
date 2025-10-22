@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+
 import { GenerateImage } from "@/components/GenerateImage";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TrainDash from "@/components/TrainDash";
