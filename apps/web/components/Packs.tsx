@@ -1,6 +1,9 @@
+"use client";
 import axios from "axios";
 import { BACKEND_URL } from "@/app/config";
 import { PacksClient } from "./PacksClient";
+import { useEffect, useState } from "react";
+import { Skeleton } from "./ui/skeleton";
 
 interface Tpack {
   id: string;
@@ -10,18 +13,34 @@ interface Tpack {
   description: string;
 }
 
-async function getPacks(): Promise<Tpack[]> {
-  const res = await axios.get(`${BACKEND_URL}/pack/bulk`);
+export function Packs() {
+  const [packs, setPacks] = useState<Tpack[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  console.log(res.data.packs);
-  return res.data.packs ;
-}
-export async function Packs() {
-  const packs = await getPacks();
-  // setPackId(packs.dat)
-  console.log("Packs: ",packs)
-    return <PacksClient packs={packs}  />
+  useEffect(() => {
+    async function getPacks() {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/pack/bulk`);
+        console.log(res.data.packs);
+        setPacks(res.data.packs);
+      } catch (error) {
+        console.error("Failed to fetch packs:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getPacks();
+  }, []);
 
-  
-  
+  if (isLoading) {
+    return (
+      <div className="grid md:grid-cols-3 gap-4 p-4 grids-cols-1">
+        <Skeleton className="h-[400px] w-full" />
+        <Skeleton className="h-[400px] w-full" />
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+    );
+  }
+
+  return <PacksClient packs={packs} />;
 }
