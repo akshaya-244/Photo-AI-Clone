@@ -24,6 +24,11 @@ const PORT = process.env.PORT || 8080;
 const stripe = new Stripe(process.env.NEXT_STRIPE_SECRET_KEY as string);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 app.post(
   "/webhook/stripe",
   express.raw({ type: "application/json" }),
